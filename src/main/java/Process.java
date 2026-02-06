@@ -42,7 +42,6 @@ public class Process {
                 String key;
                 while (mapper.hasNextLine()) {
                     key = mapper.nextLine();
-                    System.out.println(key);
                     commandsTable.put(key, method);
                 }
             }
@@ -58,11 +57,20 @@ public class Process {
         return new Process(config);
     }
     protected static void process(String input) {
-        Method m = commandsTable.get(input);
         try {
-            m.invoke(null);
+            Scanner command = new Scanner(input);
+            Method m = commandsTable.get(command.next());
+            String[] args;
+            if (command.hasNextLine()) {
+                String rest = command.nextLine().trim();
+                args = rest.isEmpty() ? new String[0] : rest.split("\\s+");
+            } else {
+                args = new String[0];  // no arguments
+            }
+            m.invoke(null, args);
         } catch (Exception e) {
-            Action.echo();
+            Action.add(input);
         }
     }
+
 }
