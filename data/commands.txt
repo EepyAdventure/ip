@@ -1,0 +1,2 @@
+Action exit C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\bye.txt
+Action echo C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\echo.txt
