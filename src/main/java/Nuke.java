@@ -11,7 +11,7 @@ public class Nuke {
             System.out.println(Bank.GREETING);
             System.out.println(Bank.LINE);
         } catch (Exception e){
-            return;
+            System.out.println(e.getMessage());
         }
     }
     protected static void exit() {

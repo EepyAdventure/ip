@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,13 +21,22 @@ public class Action {
     protected static void chat() {
         while (!status) {
             input = scanner.nextLine();
-            Process.process(input);
+            try {
+                Process.process(input);
+            } catch (InvocationTargetException e) {
+                System.out.println(e.getCause().getMessage());
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
     protected static void echo(String echo) {
         System.out.println(echo);
     }
-    protected static void add(String taskType, String... description) {
+    protected static void add(String taskType, String... description) throws Exception {
+        if (description.length == 0) {
+            throw new NukeException("You forgor the description :skull");
+        }
         Task task = Task.makeTask(taskType, description);
         listTemp.add(task);
         System.out.printf("Task Added to list\n");
@@ -39,29 +49,27 @@ public class Action {
     protected static void unmark(String index) {
         listTemp.get(Integer.valueOf(index) - 1).setStatus(false);
     }
-    protected static void list() {
-        try {
-            int count = 1;
-            if (!Files.readAllLines(listPerm).isEmpty()) {
-                Scanner permLines = new Scanner(listPerm);
-                while (permLines.hasNext()) {
-                    System.out.printf("%d %s \n", count, permLines.nextLine());
-                    count++;
-                }
+    protected static void list() throws Exception{
+        int count = 1;
+        if (!Files.readAllLines(listPerm).isEmpty()) {
+            Scanner permLines = new Scanner(listPerm);
+            while (permLines.hasNext()) {
+                System.out.printf("%d %s \n", count, permLines.nextLine());
+                count++;
             }
-            listTemp.updateIndex(count);
-            System.out.printf(listTemp.toString());
-        } catch (Exception e) {
-            System.out.println("List empty or not initiated");
-            System.out.println(e);
         }
+        if (count == 1 && listTemp.isEmpty()) {
+            throw new NukeException("The List is empty and so nobody came");
+        }
+        listTemp.updateIndex(count);
+        System.out.printf(listTemp.toString());
     }
     protected static void save() {
         try {
             Files.write(listPerm, listTemp.toString().getBytes());
             listTemp.clear();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new NukeException("Your SAVE file DOES NOT EXIST");
         }
     }
 }

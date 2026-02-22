@@ -25,18 +25,14 @@ public class Task {
         this.status = false;
         this.taskType = taskType;
     }
-    public static Task makeTask(String taskType, String... args) {
-        try {
-            if (taskTypeToClass.get(taskType) != null) {
-                String a = taskTypeToClass.get(taskType).toString();
-                String b = taskTypeToClass.get(taskType).getDeclaredConstructor(String[].class).toString();
-                String c = taskTypeToClass.get(taskType).getDeclaredConstructor(String[].class).newInstance((Object) args).toString();
-                return (Task) taskTypeToClass.get(taskType).getDeclaredConstructor(String[].class).newInstance((Object) args);
-            } else {
-                return new Task(args);
-            }
-        } catch (Exception e) {
-            return new Task(args);
+    public static Task makeTask(String taskType, String... args) throws Exception {
+        if (args.length == 0) {
+            throw new NukeException("You forgor the description :skull");
+        }
+        if (taskTypeToClass.get(taskType) != null) {
+            return (Task) taskTypeToClass.get(taskType).getDeclaredConstructor(String[].class).newInstance((Object) args);
+        } else {
+            throw new NukeException("What kinda task is this? May I eat it?");
         }
 
     }
