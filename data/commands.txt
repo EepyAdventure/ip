@@ -1,6 +1,6 @@
 Action exit C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\bye.txt
 Action echo java.lang.String C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\echo.txt
-Action add java.lang.String C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\add.txt
+Action add java.lang.String [Ljava.lang.String; C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\add.txt
 Action list C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\list.txt
 Action mark java.lang.String C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\mark.txt
 Action unmark java.lang.String C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\unmark.txt

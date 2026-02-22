@@ -1,10 +1,6 @@
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class Process {
@@ -60,16 +56,45 @@ public class Process {
         try {
             Scanner command = new Scanner(input);
             Method m = commandsTable.get(command.next());
+
             String[] args;
             if (command.hasNextLine()) {
                 String rest = command.nextLine().trim();
                 args = rest.isEmpty() ? new String[0] : rest.split("\\s+");
             } else {
-                args = new String[0];  // no arguments
+                args = new String[0];
             }
-            m.invoke(null, args);
+
+            Class<?>[] paramTypes = m.getParameterTypes();
+            Object[] finalArgs = new Object[paramTypes.length];
+
+            // Handle varargs vs fixed parameters
+            if (paramTypes.length > 0 && paramTypes[paramTypes.length - 1].isArray()) {
+                // Last parameter is varargs (String...)
+                int fixedCount = paramTypes.length - 1;
+
+                // Fill fixed parameters
+                for (int i = 0; i < fixedCount; i++) {
+                    finalArgs[i] = (i < args.length) ? args[i] : null;
+                }
+
+                // Remaining tokens go into the varargs array
+                String[] varargs = (args.length > fixedCount)
+                        ? Arrays.copyOfRange(args, fixedCount, args.length)
+                        : new String[0];
+                finalArgs[fixedCount] = varargs;
+
+            } else {
+                // No varargs: just map tokens directly
+                for (int i = 0; i < paramTypes.length; i++) {
+                    finalArgs[i] = (i < args.length) ? args[i] : null;
+                }
+            }
+
+            m.invoke(null, finalArgs);
+
         } catch (Exception e) {
-            Action.add(input);
+            Action.echo(input);
         }
     }
 

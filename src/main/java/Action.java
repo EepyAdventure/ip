@@ -26,8 +26,12 @@ public class Action {
     protected static void echo(String echo) {
         System.out.println(echo);
     }
-    protected static void add(String taskName) {
-        listTemp.add(new Task(taskName));
+    protected static void add(String taskType, String... description) {
+        Task task = Task.makeTask(taskType, description);
+        listTemp.add(task);
+        System.out.printf("Task Added to list\n");
+        System.out.printf("  %s\n", task.toString());
+        System.out.printf("Now you have %d tasks in the list\n", listTemp.getCount());
     }
     protected static void mark(String index) {
         listTemp.get(Integer.valueOf(index) - 1).setStatus(true);

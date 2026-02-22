@@ -9,6 +9,9 @@ public class TaskList extends ArrayList<Task> {
     public void updateIndex(int index) {
         this.index = index;
     }
+    public int getCount() {
+        return this.count + this.index;
+    }
     @Override
     public void clear() {
         this.index = this.index + this.count;
