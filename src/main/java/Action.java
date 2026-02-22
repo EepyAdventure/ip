@@ -43,6 +43,13 @@ public class Action {
         System.out.printf("  %s\n", task.toString());
         System.out.printf("Now you have %d tasks in the list\n", listTemp.getCount());
     }
+    protected static void delete(String index) {
+        Task task = listTemp.get(Integer.valueOf(index) - 1);
+        listTemp.remove(Integer.valueOf(index) - 1);
+        System.out.printf("I dragged them out the back\n");
+        System.out.printf("  %s\n", task.toString());
+        System.out.printf("Now you have %d tasks in the list\n", listTemp.getCount());
+    }
     protected static void mark(String index) {
         listTemp.get(Integer.valueOf(index) - 1).setStatus(true);
     }
@@ -66,6 +73,7 @@ public class Action {
     }
     protected static void save() {
         try {
+            System.out.println("Warning, this feature is incomplete");
             Files.write(listPerm, listTemp.toString().getBytes());
             listTemp.clear();
         } catch (IOException e) {

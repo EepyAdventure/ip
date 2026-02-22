@@ -23,6 +23,11 @@ public class TaskList extends ArrayList<Task> {
         return super.add(task);
     }
     @Override
+    public Task remove(int idx) {
+        this.count--;
+        return super.remove(idx);
+    }
+    @Override
     public String toString() {
         String format = "%d. %s \n";
         String res = "";
