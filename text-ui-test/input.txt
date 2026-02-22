@@ -1,0 +1,11 @@
+echo hello
+add Task cook
+add Deadline 23rd_Feb Harvest
+add Event 22nd_Feb_6am 22nd_Feb_6pm Sleep
+add ToDo clean
+list
+mark 3
+list
+unmark 3
+list
+bye
