@@ -10,11 +10,12 @@ public class TaskList extends ArrayList<Task> {
         this.index = index;
     }
     public int getCount() {
-        return this.count + this.index;
+        return this.count + this.index - 1;
     }
     @Override
     public void clear() {
-        this.index = this.index + this.count;
+        this.index = this.index + this.count - 1;
+        this.count = 0;
         super.clear();
     }
     @Override

@@ -3,32 +3,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Scanner;
 
 public class Action {
     private static Scanner scanner = new Scanner(System.in);
     private static String input;
-    private static Boolean status = false;
-    private static TaskList listTemp = new TaskList(0);
-    private static Path listPerm = Paths.get("data\\User Data\\defaultPerm.txt");
-    protected static void start(String config) {
-        Process.init(config);
+    private static Process process;
+    private static TaskList listTemp;
+    private static Path listPerm;
+    protected static void start(Process process_, TaskList listTemp_, Path listPerm_) {
+        process = process_;
+        listTemp = listTemp_;
+        listPerm = listPerm_;
     }
     protected static void exit() {
         listTemp.clear();
-        status = true;
-    }
-    protected static void chat() {
-        while (!status) {
-            input = scanner.nextLine();
-            try {
-                Process.process(input);
-            } catch (InvocationTargetException e) {
-                System.out.println(e.getCause().getMessage());
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
     }
     protected static void echo(String echo) {
         System.out.println(echo);
@@ -61,7 +51,7 @@ public class Action {
         if (!Files.readAllLines(listPerm).isEmpty()) {
             Scanner permLines = new Scanner(listPerm);
             while (permLines.hasNext()) {
-                System.out.printf("%d %s \n", count, permLines.nextLine());
+                System.out.printf("%s \n", permLines.nextLine());
                 count++;
             }
         }
@@ -73,9 +63,11 @@ public class Action {
     }
     protected static void save() {
         try {
-            System.out.println("Warning, this feature is incomplete");
-            Files.write(listPerm, listTemp.toString().getBytes());
+            Files.write(listPerm, listTemp.toString().getBytes(),
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.APPEND);
             listTemp.clear();
+            System.out.println("You are filled with determination");
         } catch (IOException e) {
             throw new NukeException("Your SAVE file DOES NOT EXIST");
         }
