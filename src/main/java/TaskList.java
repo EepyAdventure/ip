@@ -1,20 +1,27 @@
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class TaskList extends ArrayList<Task> {
     private int count;
-    private int index;
-    public TaskList(int index) {
-        this.index = index;
-    }
-    public void updateIndex(int index) {
-        this.index = index;
+    public TaskList(Path save) throws Exception {
+        if (!Files.readAllLines(save).isEmpty()) {
+            Scanner permLines = new Scanner(save);
+            String type;
+            String[] line;
+            while (permLines.hasNext()) {
+                type = permLines.next();
+                line = permLines.nextLine().trim().split("\\s+");
+                this.add(Task.makeTask(type, line));
+            }
+        }
     }
     public int getCount() {
-        return this.count + this.index - 1;
+        return this.count;
     }
     @Override
     public void clear() {
-        this.index = this.index + this.count - 1;
         this.count = 0;
         super.clear();
     }
@@ -32,9 +39,17 @@ public class TaskList extends ArrayList<Task> {
     public String toString() {
         String format = "%d. %s \n";
         String res = "";
-        for (int i = 0; i <this.count; i++) {
-            res = res + String.format(format, i + this.index, super.get(i).toString());
+        for (int i = 0; i < this.count; i++) {
+            res = res + String.format(format, i, super.get(i).toString());
         }
         return res;
+    }
+    public byte[] toSave() {
+        String format = "%s \n";
+        String res = "";
+        for (int i = 0; i <this.count; i++) {
+            res = res + String.format(format, super.get(i).toSave());
+        }
+        return res.getBytes();
     }
 }

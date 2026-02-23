@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Map;
 
 public class Task {
@@ -17,12 +18,11 @@ public class Task {
             "ToDo", ToDoTask.class
     );
     protected Task(String... description) {
-        this.description = String.join(" ", description);
-        this.status = false;
+        this.status = Boolean.parseBoolean(description[0]);
+        this.description = String.join(" ", Arrays.copyOfRange(description, 1, description.length));
     }
     protected Task(String taskType, String... description) {
-        this.description = String.join(" ", description);
-        this.status = false;
+        this.description = String.join(" ", Arrays.copyOfRange(description, 1, description.length));
         this.taskType = taskType;
     }
     public static Task makeTask(String taskType, String... args) throws Exception {
@@ -36,8 +36,17 @@ public class Task {
         }
 
     }
-    public void setStatus(boolean newStatus) {
-        this.status = newStatus;
+    public String getDescription() {
+        return this.description;
+    }
+    public String getTaskType() {
+        return this.taskType;
+    }
+    public boolean getStatus() {
+        return this.status;
+    }
+    public void setStatus(boolean status) {
+        this.status = status;
     }
     @Override
     public String toString() {
@@ -51,5 +60,9 @@ public class Task {
             return String.format(format, state, " ", this.description);
         }
         return String.format(format, state, type, this.description);
+    }
+    public String toSave() {
+        String format = "%s %b %s";
+        return String.format(format, taskType, status, description);
     }
 }

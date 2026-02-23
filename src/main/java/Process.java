@@ -55,7 +55,7 @@ public class Process {
                 scanner.nextLine();
                 count++;
             }
-            Action.start(this, new TaskList(count), saves);
+            Action.start(this, new TaskList(saves), saves);
 
         } catch (Exception e) {
             throw new NukeException("config ERROR, why did you lie to me?");
