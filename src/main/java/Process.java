@@ -1,20 +1,26 @@
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 
 public class Process {
-    private static Scanner scanner = new Scanner(System.in);
-    private static String input;
-    private static String commands;
-    private static Map<String, Method> commandsTable = new HashMap<>();
+    private Scanner scanner = new Scanner(System.in);
+    private String input;
+    private Path commands;
+    private Path saves;
+    private Map<String, Method> commandsTable = new HashMap<>();
+    private Boolean status = false;
     private Process(String config) {
         try {
             File configure = new File(config);
             Scanner scanner = new Scanner(configure);
-            commands = scanner.nextLine();
-            File commander = new File(commands);
+            commands = Paths.get(scanner.nextLine());
+            saves = Paths.get(scanner.nextLine());
+            File commander = commands.toFile();
+            File saver = saves.toFile();
             scanner = new Scanner(commander);
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
@@ -43,6 +49,14 @@ public class Process {
                 }
             }
             scanner.close();
+            scanner = new Scanner(saver);
+            int count = 0;
+            while (scanner.hasNextLine()) {
+                scanner.nextLine();
+                count++;
+            }
+            Action.start(this, new TaskList(count), saves);
+
         } catch (Exception e) {
             throw new NukeException("config ERROR, why did you lie to me?");
         }
@@ -51,7 +65,19 @@ public class Process {
     protected static Process init(String config) {
         return new Process(config);
     }
-    protected static void process(String input) throws Exception {
+    protected void chat() {
+        while (!status) {
+            input = scanner.nextLine();
+            try {
+                this.process(input);
+            } catch (InvocationTargetException e) {
+                System.out.println(e.getCause().getMessage());
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+    protected void process(String input) throws Exception {
         Scanner command = new Scanner(input);
         Method m = commandsTable.get(command.next());
 
