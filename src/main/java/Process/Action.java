@@ -14,18 +14,21 @@ public class Action {
     private static Process process;
     private static TaskList listTemp;
     private static Path listPerm;
-    protected static void start(Process process_, TaskList listTemp_, Path listPerm_) {
+    protected static boolean start(Process process_, TaskList listTemp_, Path listPerm_) {
         process = process_;
         listTemp = listTemp_;
         listPerm = listPerm_;
+        return true;
     }
-    protected static void exit() {
+    protected static boolean exit() {
         listTemp.clear();
+        return false;
     }
-    protected static void echo(String echo) {
+    protected static boolean echo(String echo) {
         System.out.println(echo);
+        return true;
     }
-    protected static void add(String taskType, String... description) throws Exception {
+    protected static boolean add(String taskType, String... description) throws Exception {
         if (description.length == 0) {
             throw new NukeException("You forgor the description :skull");
         }
@@ -37,25 +40,29 @@ public class Action {
         System.out.printf("Task Added to list\n");
         System.out.printf("  %s\n", task.toString());
         System.out.printf("Now you have %d tasks in the list\n", listTemp.getCount());
-
+        return true;
     }
-    protected static void delete(String index) {
+    protected static boolean delete(String index) {
         Task task = listTemp.get(Integer.valueOf(index) - 1);
         listTemp.remove(Integer.valueOf(index) - 1);
         System.out.printf("I dragged them out the back\n");
         System.out.printf("  %s\n", task.toString());
         System.out.printf("Now you have %d tasks in the list\n", listTemp.getCount());
+        return true;
     }
-    protected static void mark(String index) {
+    protected static boolean mark(String index) {
         listTemp.get(Integer.valueOf(index) - 1).setStatus(true);
+        return true;
     }
-    protected static void unmark(String index) {
+    protected static boolean unmark(String index) {
         listTemp.get(Integer.valueOf(index) - 1).setStatus(false);
+        return true;
     }
-    protected static void list() throws Exception {
+    protected static boolean list() throws Exception {
         System.out.printf(listTemp.toString());
+        return true;
     }
-    protected static void save() {
+    protected static boolean save() {
         try {
             Files.write(listPerm, listTemp.toSave(),
                     StandardOpenOption.CREATE);
@@ -63,5 +70,6 @@ public class Action {
         } catch (IOException e) {
             throw new NukeException("Your SAVE file DOES NOT EXIST");
         }
+        return true;
     }
 }

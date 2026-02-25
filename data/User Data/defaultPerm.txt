@@ -1,6 +1,7 @@
-Deadline false 2026-03-01T00:00 harvest 
-Event true 2026-03-01T00:00 2026-03-02T00:00 cooking competition 
+Deadline false 2026-03-01T00:00 hockey 
+Event true 2026-03-01T00:00 2026-03-02T00:00 competition 
 ToDo false clean 
 Task false fly 
 Task false drink 
-
+Task false adder 
+Task false Harvest 

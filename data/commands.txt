@@ -1,8 +1,8 @@
-Action exit C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\bye.txt
-Action echo java.lang.String C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\echo.txt
-Action add java.lang.String [Ljava.lang.String; C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\add.txt
-Action delete java.lang.String C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\delete.txt
-Action list C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\list.txt
-Action mark java.lang.String C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\mark.txt
-Action unmark java.lang.String C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\unmark.txt
-Action save C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands\save.txt
+Process.Action exit .\data\commands\bye.txt
+Process.Action echo java.lang.String .\data\commands\echo.txt
+Process.Action add java.lang.String [Ljava.lang.String; .\data\commands\add.txt
+Process.Action delete java.lang.String .\data\commands\delete.txt
+Process.Action list .\data\commands\list.txt
+Process.Action mark java.lang.String .\data\commands\mark.txt
+Process.Action unmark java.lang.String .\data\commands\unmark.txt
+Process.Action save .\data\commands\save.txt

@@ -24,7 +24,7 @@ public class Task {
         this.description = String.join(" ", Arrays.copyOfRange(description, 1, description.length));
     }
     protected Task(String taskType, String... description) {
-        this.description = String.join(" ", Arrays.copyOfRange(description, 1, description.length));
+        this.description = String.join(" ", Arrays.copyOfRange(description, 0, description.length));
         this.taskType = taskType;
     }
     public static Task makeTask(String taskType, String... args) throws Exception {

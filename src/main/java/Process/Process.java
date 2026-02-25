@@ -60,6 +60,7 @@ public class Process {
             Action.start(this, new TaskList(saves), saves);
 
         } catch (Exception e) {
+            System.out.println(e.getCause().getMessage());
             throw new NukeException("config ERROR, why did you lie to me?");
         }
 
@@ -67,19 +68,8 @@ public class Process {
     public static Process init(String config) {
         return new Process(config);
     }
-    public void chat() {
-        while (!status) {
-            input = scanner.nextLine();
-            try {
-                this.process(input);
-            } catch (InvocationTargetException e) {
-                System.out.println(e.getCause().getMessage());
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
-    }
-    public void process(String input) throws Exception {
+
+    public boolean process(String input) throws Exception {
         Scanner command = new Scanner(input);
         Method m = commandsTable.get(command.next());
 
@@ -121,7 +111,7 @@ public class Process {
             }
         }
 
-        m.invoke(null, finalArgs);
+        return (boolean) m.invoke(null, finalArgs);
     }
 
 }
