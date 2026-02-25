@@ -1,2 +1,2 @@
-C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\commands.txt
-C:\Users\joshu\OneDrive\Documents\GitHub\ip\data\User Data\defaultPerm.txt
+.\data\commands.txt
+.\data\User Data\defaultPerm.txt
