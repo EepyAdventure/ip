@@ -1,0 +1,2 @@
+.\data\commands.txt
+.\data\User Data\defaultPerm.txt
