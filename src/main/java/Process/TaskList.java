@@ -64,9 +64,9 @@ public class TaskList extends ArrayList<Task> {
      * @return new TaskList without the object
      */
     @Override
-    public Task remove(int idx) {
+    public Task remove(int index) {
         this.count--;
-        return super.remove(idx);
+        return super.remove(index);
     }
 
     /**

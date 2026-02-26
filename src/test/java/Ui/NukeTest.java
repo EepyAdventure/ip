@@ -15,7 +15,7 @@ public class NukeTest {
      * @throws Exception if initiation and exit outputs are wrong
      */
     @Test
-    public void initExitTest() throws Exception{
+    public void initExitTest() throws Exception {
         // Capture everything printed by main
         String simulatedInput = "bye\n";
         System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));

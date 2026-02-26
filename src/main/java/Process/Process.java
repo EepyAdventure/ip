@@ -1,7 +1,6 @@
 package Process;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,6 +17,7 @@ public class Process {
      *
      * @param config config file path in String
      */
+    private final Map<String, Method> commandsToMethods = new HashMap<>();
     private Process(String config) {
         try {
             File configure = new File(config);
@@ -50,7 +50,7 @@ public class Process {
                 String key;
                 while (mapper.hasNextLine()) {
                     key = mapper.nextLine();
-                    commandsTable.put(key, method);
+                    commandsToMethods.put(key, method);
                 }
             }
             scanner.close();

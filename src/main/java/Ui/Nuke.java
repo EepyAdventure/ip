@@ -32,7 +32,7 @@ public class Nuke {
             System.out.println(Bank.LOGO_LOBOTOMY);
             System.out.println(Bank.GREETING);
             System.out.println(Bank.LINE);
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }

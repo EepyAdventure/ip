@@ -7,13 +7,13 @@ public class Task {
     private final String description;
     protected String taskType = "Task";
     private boolean status;
-    private static Map<String, String> taskTypeToString = Map.of(
+    private static final Map<String, String> taskTypeToString = Map.of(
             "Task", " ",
             "Deadline", "D",
             "Event", "E",
             "ToDo", "T"
     );
-    private static Map<String, Class> taskTypeToClass = Map.of(
+    private static final Map<String, Class> taskTypeToClass = Map.of(
             "Task", Task.class,
             "Deadline", DeadlinesTask.class,
             "Event", EventsTask.class,
