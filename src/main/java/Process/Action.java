@@ -61,6 +61,18 @@ public class Action {
         System.out.printf(listTemp.toString());
         return true;
     }
+
+    protected static boolean find(String substring) {
+        TaskList res = listTemp.find(substring);
+        if (res.getCount() > 0) {
+            System.out.println("We found private Ryan, Here are the matches");
+            System.out.println(res);
+        } else {
+            System.out.println("There is NOTHING HERE");
+        }
+        return true;
+    }
+
     protected static boolean save() {
         try {
             Files.write(listPerm, listTemp.toSave(),
