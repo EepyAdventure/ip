@@ -1,12 +1,13 @@
-package Ui;
-import Data.Bank;
+package ui;
 
 import static com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOut;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.io.ByteArrayInputStream;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
+import data.Bank;
 
 public class NukeTest {
     /**
@@ -20,7 +21,7 @@ public class NukeTest {
         String simulatedInput = "bye\n";
         System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
         String output = tapSystemOut(() -> {
-            Ui.Nuke.main(new String[]{});
+            ui.Nuke.main(new String[]{});
         });
         String expected = Bank.LOGO_LOBOTOMY + System.lineSeparator()
                         + Bank.GREETING + System.lineSeparator()

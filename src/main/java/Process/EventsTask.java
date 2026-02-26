@@ -1,4 +1,4 @@
-package Process;
+package process;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -6,6 +6,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
+
+/**
+ * Subclass of Tasks with a startTime and endTime
+ */
 
 public class EventsTask extends Task {
     private LocalDateTime startTime;
@@ -64,7 +68,7 @@ public class EventsTask extends Task {
 
         days = to.toDays();
         hours = to.toHours() % 24;
-        minutes = to.toMinutes() %60;
+        minutes = to.toMinutes() % 60;
 
         String till = String.format("%d days, %d hours, %d minutes", days, hours, minutes);
 
@@ -80,7 +84,8 @@ public class EventsTask extends Task {
     @Override
     public String toSave() {
         String format = "%s %s %s %s %s";
-        return String.format(format, super.getTaskType(), super.getStatus(), startTime, endTime, super.getDescription());
+        return String.format(format, super.getTaskType(), super.getStatus(),
+                startTime, endTime, super.getDescription());
     }
 }
 

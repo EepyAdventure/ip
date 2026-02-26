@@ -1,22 +1,32 @@
-package Process;
+package process;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
+
+/**
+ * Class handling the file accesses and system calls
+ * Processes all inputs, including system start
+ */
 
 public class Process {
     private Path commands;
     private Path saves;
+    private final Map<String, Method> commandsToMethods = new HashMap<>();
 
     /**
      * Constructor for a new Process object
      *
      * @param config config file path in String
      */
-    private final Map<String, Method> commandsToMethods = new HashMap<>();
     private Process(String config) {
         try {
             File configure = new File(config);

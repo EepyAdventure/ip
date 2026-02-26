@@ -1,12 +1,12 @@
-package Process;
+package process;
 
 import java.util.Arrays;
 import java.util.Map;
 
+/**
+ * Object class representation of a task
+ */
 public class Task {
-    private final String description;
-    protected String taskType = "Task";
-    private boolean status;
     private static final Map<String, String> taskTypeToString = Map.of(
             "Task", " ",
             "Deadline", "D",
@@ -19,6 +19,9 @@ public class Task {
             "Event", EventsTask.class,
             "ToDo", ToDoTask.class
     );
+    private final String description;
+    private String taskType = "Task";
+    private boolean status;
 
     /**
      * Constructor for a new Task object
@@ -55,7 +58,9 @@ public class Task {
             throw new NukeException("You forgor the description :skull");
         }
         if (taskTypeToClass.get(taskType) != null) {
-            return (Task) taskTypeToClass.get(taskType).getDeclaredConstructor(String[].class).newInstance((Object) description);
+            return (Task) taskTypeToClass.get(taskType)
+                    .getDeclaredConstructor(String[].class)
+                    .newInstance((Object) description);
         } else {
             throw new NukeException("What kinda task is this? May I eat it?");
         }

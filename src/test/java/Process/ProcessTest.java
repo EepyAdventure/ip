@@ -1,8 +1,4 @@
-package Process;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+package process;
 
 import static com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOut;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,6 +10,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+
 public class ProcessTest {
     private static Process process;
     private static File configure;
@@ -22,8 +22,8 @@ public class ProcessTest {
 
     @BeforeEach
     void initEach() throws Exception {
-        process = Process.init(".\\config.txt");
-        configure = new File(".\\config.txt");
+        process = Process.init(".\\config\\config.txt");
+        configure = new File(".\\config\\config.txt");
         Scanner scanner = new Scanner(configure);
         scanner.nextLine();
         saves = Paths.get(scanner.nextLine());
@@ -72,7 +72,7 @@ public class ProcessTest {
         });
         listCount = listCount + 1;
         assertEquals(String.format("Task Added to list\n  %s\nNow you have %d tasks in the list\n",
-                Task.makeTask("Task", "false", "slime"),listCount), output);
+                Task.makeTask("Task", "false", "slime"), listCount), output);
         output = tapSystemOut(() -> {
             process.process("list");
         });

@@ -1,7 +1,10 @@
-package Process;
+package process;
 
 import java.util.Arrays;
 
+/**
+ * Class of Task where its a ToDo with no deadline
+ */
 public class ToDoTask extends Task {
 
     /**

@@ -8,6 +8,12 @@
 plugins {
     id("java")
     application
+    id("checkstyle")
+    // other plugins
+}
+
+checkstyle {
+    toolVersion = "11.0.0"
 }
 
 repositories {
@@ -23,14 +29,14 @@ dependencies {
 }
 
 application {
-    mainClass.set("Ui.Nuke") // fully qualified class name
+    mainClass.set("ui.Nuke") // fully qualified class name
     applicationDefaultJvmArgs = listOf("-Dfile.encoding=UTF-8")
 }
 tasks.jar {
     archiveFileName.set("NUCLEAR.jar") // custom name
     destinationDirectory.set(project.rootDir) // custom folder
     manifest {
-        attributes["Main-Class"] = "Ui.Nuke"
+        attributes["Main-Class"] = "ui.Nuke"
     }
 }
 tasks.test {

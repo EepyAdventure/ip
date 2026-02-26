@@ -1,10 +1,14 @@
-package Ui;
-import Process.Process;
-import Data.Bank;
+package ui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Scanner;
 
+import data.Bank;
+import process.Process;
+
+/**
+ * Main executable class to handle UI
+ */
 public class Nuke {
     private static Process process;
     private static String input;
@@ -16,7 +20,7 @@ public class Nuke {
      * @param args
      */
     public static void main(String[] args) {
-        start(".\\config.txt");
+        start(".\\config\\config.txt");
         chat();
         exit();
     }

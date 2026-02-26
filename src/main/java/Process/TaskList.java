@@ -1,4 +1,4 @@
-package Process;
+package process;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -7,6 +7,9 @@ import java.util.Collections;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/**
+ * A class that is an arrayList of tasks
+ */
 public class TaskList extends ArrayList<Task> {
     private int count;
 
@@ -29,15 +32,24 @@ public class TaskList extends ArrayList<Task> {
         }
     }
 
+    /**
+     * Constructor for a new TaskList object
+     *
+     * @param tasks Array of tasks to add
+     * @throws Exception is thrown if there was an error adding Tasks to the list
+     */
     public TaskList(Task[] tasks) throws Exception {
         super();
         Collections.addAll(this, tasks);
     }
 
+    /**
+     * Constructor for a new TaskList object
+     */
     public TaskList() {
         super();
     }
-    
+
     /**
      * Getter for the count of Tasks in this TaskList object
      *
@@ -71,7 +83,7 @@ public class TaskList extends ArrayList<Task> {
     /**
      * Method that removes a Task from this TaskList object based on its index
      *
-     * @param idx the index of the Task to be removed from this TaskList object
+     * @param index the index of the Task to be removed from this TaskList object
      * @return new TaskList without the object
      */
     @Override
@@ -80,13 +92,19 @@ public class TaskList extends ArrayList<Task> {
         return super.remove(index);
     }
 
+    /**
+     * Method that finds all Tasks from this TaskList object that contains a specific substring in its description
+     *
+     * @param substring substring to search for
+     * @return TaskList of all tasks that contains a specific substring in its description
+     */
     public TaskList find(String substring) {
         return this.stream()
                 .filter(task -> task.getDescription().contains(substring))
                 .collect(Collectors.toCollection(TaskList::new));
 
     }
-    
+
     /**
      * Returns a string representation of this TaskList object
      *
@@ -110,7 +128,7 @@ public class TaskList extends ArrayList<Task> {
     public byte[] toSave() {
         String format = "%s \n";
         String res = "";
-        for (int i = 0; i <this.count; i++) {
+        for (int i = 0; i < this.count; i++) {
             res = res + String.format(format, super.get(i).toSave());
         }
         return res.getBytes();
