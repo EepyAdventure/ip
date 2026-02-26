@@ -33,9 +33,9 @@ public class TaskList extends ArrayList<Task> {
         return super.add(task);
     }
     @Override
-    public Task remove(int idx) {
+    public Task remove(int index) {
         this.count--;
-        return super.remove(idx);
+        return super.remove(index);
     }
     @Override
     public String toString() {

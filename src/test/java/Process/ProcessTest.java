@@ -21,7 +21,7 @@ public class ProcessTest {
     private static long listCount;
 
     @BeforeEach
-    void initEach() throws Exception{
+    void initEach() throws Exception {
         process = Process.init(".\\config.txt");
         configure = new File(".\\config.txt");
         Scanner scanner = new Scanner(configure);

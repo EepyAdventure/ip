@@ -10,7 +10,7 @@ import java.io.ByteArrayInputStream;
 
 public class NukeTest {
     @Test
-    public void initExitTest() throws Exception{
+    public void initExitTest() throws Exception {
         // Capture everything printed by main
         String simulatedInput = "bye\n";
         System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));

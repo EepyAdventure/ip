@@ -42,19 +42,19 @@ public class Action {
         return true;
     }
     protected static boolean delete(String index) {
-        Task task = listTemp.get(Integer.valueOf(index) - 1);
-        listTemp.remove(Integer.valueOf(index) - 1);
+        Task task = listTemp.get(Integer.parseInt(index) - 1);
+        listTemp.remove(Integer.parseInt(index) - 1);
         System.out.printf("I dragged them out the back\n");
         System.out.printf("  %s\n", task.toString());
         System.out.printf("Now you have %d tasks in the list\n", listTemp.getCount());
         return true;
     }
     protected static boolean mark(String index) {
-        listTemp.get(Integer.valueOf(index) - 1).setStatus(true);
+        listTemp.get(Integer.parseInt(index) - 1).setStatus(true);
         return true;
     }
     protected static boolean unmark(String index) {
-        listTemp.get(Integer.valueOf(index) - 1).setStatus(false);
+        listTemp.get(Integer.parseInt(index) - 1).setStatus(false);
         return true;
     }
     protected static boolean list() throws Exception {
