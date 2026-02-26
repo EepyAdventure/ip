@@ -3,6 +3,9 @@ package Data;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Not currently in use, might code a custom Data handler down the line
+ */
 class IndexNode {
     Map<Character, IndexNode> children;
     boolean isEndOfWord;

@@ -3,6 +3,10 @@ package Data;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
+/**
+ * Not currently in use, might code a custom Data handler down the line
+ */
 public class Data {
     public static void addFile(String path) {
         File file = new File(path);

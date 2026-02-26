@@ -1,6 +1,11 @@
 package Data;
 
+/**
+ * Currently in use, will change architecture and remove once UI is finished
+ */
+
 public class Bank {
+
     public static final String LINE = "_____________________________________________";
     public static final String LOGO_AME = "⠀⠀⠀⢀⠂⡠⠂⠀⠀⠀⠔⠀⠀⡈⠀⠀⠀⠀⠀⠀⢔⠅⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢡⠀⠀⠈⡀⠀⠀⠀⠀⠀⠀⢰⠀⠄⡀⠢⠂⡃⡀⢸⠠⡃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡐⡀⡂⠨⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n" +
             "⠀⠐⠀⡌⢀⠆⠀⠀⠀⢐⠀⠀⠰⠀⠀⠀⠀⠀⠀⠎⠨⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⠀⠄⠂⠀⠂⠨⠄⠀⠀⡂⠀⠀⡀⠀⡀⠄⠂⢅⢒⢌⢜⠀⠇⠀⢸⢱⠀⠀⠠⠐⠀⠈⠀⡀⠂⠀⠂⠁⠀⠀⠢⠐⡀⠅⠀⢀⠐⠈⠀⢀⠈⠀⡀⠁⠀⠂⠁⠀⠁⠀⠈\n" +

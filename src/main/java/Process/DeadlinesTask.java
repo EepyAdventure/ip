@@ -10,6 +10,12 @@ import java.time.LocalDateTime;
 public class DeadlinesTask extends Task {
     private LocalDateTime deadline;
 
+    /**
+     * Constructor for a DeadlinesTask object
+     *
+     * @param description description of Task to construct
+     * @throws NukeException is description is invalid
+     */
     protected DeadlinesTask(String... description) throws NukeException {
         super("Deadline", Arrays.copyOfRange(description, 2, description.length));
         super.setStatus(Boolean.parseBoolean(description[0]));
@@ -26,6 +32,12 @@ public class DeadlinesTask extends Task {
         }
 
     }
+
+    /**
+     * Returns a string representation of this DeadlinesTask object
+     *
+     * @return String representation of this DeadlinesTask object
+     */
     @Override
     public String toString() {
         LocalDateTime now = LocalDateTime.now();
@@ -40,6 +52,12 @@ public class DeadlinesTask extends Task {
         return String.format("%s (by: %s, %s Left)", super.toString(), deadline, timeLeft);
 
     }
+
+    /**
+     * Returns the save format of this DeadlinesTask object
+     *
+     * @return String that is the save format of this DeadlinesTask object
+     */
     @Override
     public String toSave() {
         String format = "%s %b %s %s";

@@ -10,6 +10,13 @@ import java.util.Arrays;
 public class EventsTask extends Task {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+
+    /**
+     * Constructor for a EventsTask object
+     *
+     * @param description description of Task to construct
+     * @throws NukeException is description is invalid
+     */
     protected EventsTask(String... description) throws NukeException {
         super("Event", Arrays.copyOfRange(description, 3, description.length));
         super.setStatus(Boolean.parseBoolean(description[0]));
@@ -37,6 +44,12 @@ public class EventsTask extends Task {
         }
 
     }
+
+    /**
+     * Returns a string representation of this EventsTask object
+     *
+     * @return String representation of this EventsTask object
+     */
     @Override
     public String toString() {
         LocalDateTime now = LocalDateTime.now();
@@ -59,11 +72,15 @@ public class EventsTask extends Task {
         return String.format(format, super.toString(), startTime, endTime, length, till);
     }
 
+    /**
+     * Returns the save format of this EventsTask object
+     *
+     * @return String that is the save format of this EventsTask object
+     */
     @Override
     public String toSave() {
         String format = "%s %s %s %s %s";
         return String.format(format, super.getTaskType(), super.getStatus(), startTime, endTime, super.getDescription());
     }
-
 }
 

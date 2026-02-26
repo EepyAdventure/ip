@@ -9,6 +9,11 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 
 public class NukeTest {
+    /**
+     * Test that program initiates and exits correctly
+     *
+     * @throws Exception if initiation and exit outputs are wrong
+     */
     @Test
     public void initExitTest() throws Exception{
         // Capture everything printed by main
