@@ -10,7 +10,6 @@ import java.util.*;
 public class Process {
     private Path commands;
     private Path saves;
-    private Map<String, Method> commandsTable = new HashMap<>();
 
     /**
      * Constructor for a new Process object
@@ -88,7 +87,7 @@ public class Process {
     public boolean process(String input) throws Exception {
         try {
             Scanner command = new Scanner(input);
-            Method m = commandsTable.get(command.next());
+            Method m = commandsToMethods.get(command.next());
 
             if (m == null) {
                 throw new NukeException("Sorry I don't speak skibiddi");

@@ -82,8 +82,8 @@ public abstract class Action {
      * @return true signal to continue program execution
      */
     protected static boolean delete(String index) {
-        Task task = listTemp.get(Integer.parseInt(index) - 1);
-        listTemp.remove(Integer.parseInt(index) - 1);
+        Task task = taskList.get(Integer.parseInt(index) - 1);
+        taskList.remove(Integer.parseInt(index) - 1);
         System.out.printf("I dragged them out the back\n");
         System.out.printf("  %s\n", task.toString());
         System.out.printf("Now you have %d tasks in the list\n", taskList.getCount());
@@ -100,7 +100,7 @@ public abstract class Action {
         Task task = taskList.get(Integer.parseInt(index) - 1).setStatus(true);
         System.out.printf("Task marked as complete\n");
         System.out.printf("  %s\n", task.toString());
-        listTemp.get(Integer.parseInt(index) - 1).setStatus(true);
+        taskList.get(Integer.parseInt(index) - 1).setStatus(true);
         return true;
     }
 
@@ -114,7 +114,7 @@ public abstract class Action {
         Task task = taskList.get(Integer.parseInt(index) - 1).setStatus(false);
         System.out.printf("Task marked as complete\n");
         System.out.printf("  %s\n", task.toString());
-        listTemp.get(Integer.parseInt(index) - 1).setStatus(false);
+        taskList.get(Integer.parseInt(index) - 1).setStatus(false);
         return true;
     }
 
