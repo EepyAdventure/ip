@@ -129,7 +129,7 @@ public abstract class Action {
     }
 
     protected static boolean find(String substring) {
-        TaskList res = listTemp.find(substring);
+        TaskList res = taskList.find(substring);
         if (res.getCount() > 0) {
             System.out.println("We found private Ryan, Here are the matches");
             System.out.println(res);
