@@ -6,3 +6,4 @@ Process.Action list .\data\commands\list.txt
 Process.Action mark java.lang.String .\data\commands\mark.txt
 Process.Action unmark java.lang.String .\data\commands\unmark.txt
 Process.Action save .\data\commands\save.txt
+Process.Action find java.lang.String .\data\commands\find.txt

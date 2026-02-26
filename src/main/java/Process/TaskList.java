@@ -3,7 +3,9 @@ package Process;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class TaskList extends ArrayList<Task> {
     private int count;
@@ -27,6 +29,15 @@ public class TaskList extends ArrayList<Task> {
         }
     }
 
+    public TaskList(Task[] tasks) throws Exception {
+        super();
+        Collections.addAll(this, tasks);
+    }
+
+    public TaskList() {
+        super();
+    }
+    
     /**
      * Getter for the count of Tasks in this TaskList object
      *
@@ -69,6 +80,13 @@ public class TaskList extends ArrayList<Task> {
         return super.remove(index);
     }
 
+    public TaskList find(String substring) {
+        return this.stream()
+                .filter(task -> task.getDescription().contains(substring))
+                .collect(Collectors.toCollection(TaskList::new));
+
+    }
+    
     /**
      * Returns a string representation of this TaskList object
      *

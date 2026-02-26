@@ -128,13 +128,23 @@ public abstract class Action {
         return true;
     }
 
+    protected static boolean find(String substring) {
+        TaskList res = listTemp.find(substring);
+        if (res.getCount() > 0) {
+            System.out.println("We found private Ryan, Here are the matches");
+            System.out.println(res);
+        } else {
+            System.out.println("There is NOTHING HERE");
+        }
+        return true;
+    }
     /**
      * Method that saves current state of taskList to save
      *
      * @return true signal to continue program execution
      * @throws NukeException if unable to save
      */
-    protected static boolean save() throws Exception{
+    protected static boolean save() {
         try {
             Files.write(save, taskList.toSave(),
                     StandardOpenOption.CREATE);
