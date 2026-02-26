@@ -9,12 +9,9 @@ import java.util.*;
 
 
 public class Process {
-    private Scanner scanner = new Scanner(System.in);
-    private String input;
     private Path commands;
     private Path saves;
     private Map<String, Method> commandsTable = new HashMap<>();
-    private Boolean status = false;
     private Process(String config) {
         try {
             File configure = new File(config);

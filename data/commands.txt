@@ -1,5 +1,5 @@
 Process.Action exit .\data\commands\bye.txt
-Process.Action echo java.lang.String .\data\commands\echo.txt
+Process.Action echo [Ljava.lang.String; .\data\commands\echo.txt
 Process.Action add java.lang.String [Ljava.lang.String; .\data\commands\add.txt
 Process.Action delete java.lang.String .\data\commands\delete.txt
 Process.Action list .\data\commands\list.txt

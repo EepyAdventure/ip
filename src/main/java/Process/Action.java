@@ -6,11 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Action {
-    private static Scanner scanner = new Scanner(System.in);
-    private static String input;
     private static Process process;
     private static TaskList listTemp;
     private static Path listPerm;
@@ -24,8 +23,8 @@ public class Action {
         listTemp.clear();
         return false;
     }
-    protected static boolean echo(String echo) {
-        System.out.println(echo);
+    protected static boolean echo(String... echo) {
+        System.out.printf(String.join(" ", echo) + "\n");
         return true;
     }
     protected static boolean add(String taskType, String... description) throws Exception {

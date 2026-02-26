@@ -16,7 +16,10 @@ repositories {
 
 dependencies {
     implementation("com.google.guava:guava:32.1.2-jre")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
 }
 
 application {
@@ -30,3 +33,17 @@ tasks.jar {
         attributes["Main-Class"] = "Ui.Nuke"
     }
 }
+tasks.test {
+    useJUnitPlatform()
+
+    testLogging {
+        events("passed", "skipped", "failed")
+
+        showExceptions = true
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        showCauses = true
+        showStackTraces = true
+        showStandardStreams = false
+    }
+}
+
