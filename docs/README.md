@@ -16,16 +16,20 @@ NUKE is a JavaFX chatbot task manager with a glitchy UI, a robot voice, and abso
 ### ✅ Task Management
 Add, delete, mark, unmark, and find tasks — all through a chat interface because typing into a box is more fun than clicking buttons.
 
-Supports three task types:
+Supports five task types:
 
 | Type | Format | Example |
 |---|---|---|
 | `ToDo` | `add ToDo <description>` | `add ToDo touch grass` |
 | `Deadline` | `add Deadline <date> <description>` | `add Deadline 2026-12-31 finish assignment` |
+| `DoAfter` | `add DoAfter <date> <description>` | `add DoAfter 2026-05-05 complete final fantasy` |
+| `DoWithinPeriod` | `add DoWithinPeriod <start> <end> <description>` | `add DoWithinPeriod 2026-04-01 2026-04-06 hackathon project` |
 | `Event` | `add Event <start> <end> <description>` | `add Event 2026-01-01 2026-01-02 new years` |
 
 ### 💾 Save / Load Persistence
 Your tasks are automatically saved to disk and reloaded on startup. NUKE remembers everything. Even the embarrassing tasks.
+
+Fully customisable keywords. Go to C:\Users\User\Desktop\ip\data\commands.txt and find the command, then copy the file path and edit it to your hearts content.
 
 ### 🖥️ Glitchy JavaFX GUI
 The UI randomly:
@@ -33,7 +37,7 @@ The UI randomly:
 - Flickers the green tint
 - Adjusts contrast and saturation
 
-This is a feature, not a bug.
+This is a feature, not a bug. Enjoy a free lobotomy while you are at it.
 
 ### 🤖 Robot Voice TTS
 NUKE reads all responses aloud using your OS's built-in text-to-speech engine. Because reading is for humans.
@@ -89,14 +93,13 @@ src/
 │   │   ├── DeadlinesTask.java  — deadline task type
 │   │   ├── EventsTask.java     — event task type
 │   │   └── TaskList.java       — task list with persistence
-│   ├── ui/             # JavaFX GUI
-│   │   ├── MainWindow.java     — main controller
-│   │   ├── DialogBox.java      — chat bubble component
-│   │   ├── Nuke.java           — chatbot logic
-│   │   ├── VoiceEngine.java    — OS text-to-speech
-│   │   └── Launcher.java       — JavaFX entry point
-│   └── data/
-│       └── Bank.java           — ASCII art and strings
+│   └── ui/             # JavaFX GUI
+│       ├── MainWindow.java     — main controller
+│       ├── DialogBox.java      — chat bubble component
+│       ├── Nuke.java           — chatbot logic
+│       ├── VoiceEngine.java    — OS text-to-speech
+│       └── Launcher.java       — JavaFX entry point
+│   
 └── test/java/          # JUnit 5 tests
 ```
 
