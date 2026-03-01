@@ -1,30 +1,134 @@
-# Duke User Guide
+# 💣 NUKE — Task Manager
 
-// Update the title above to match the actual product name
+> *A task manager that threatens you into being productive.*
 
-// Product screenshot goes here
+![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square)
+![JavaFX](https://img.shields.io/badge/JavaFX-17.0.7-blue?style=flat-square)
+![Build](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square)
+![Vibe](https://img.shields.io/badge/vibe-chaotic-purple?style=flat-square)
 
-// Product intro goes here
+NUKE is a JavaFX chatbot task manager with a glitchy UI, a robot voice, and absolutely zero chill. Built as a school assignment. Powered by spite.
 
-## Adding deadlines
+---
 
-// Describe the action and its outcome.
+## 📸 Features
 
-// Give examples of usage
+### ✅ Task Management
+Add, delete, mark, unmark, and find tasks — all through a chat interface because typing into a box is more fun than clicking buttons.
 
-Example: `keyword (optional arguments)`
+Supports three task types:
 
-// A description of the expected outcome goes here
+| Type | Format | Example |
+|---|---|---|
+| `ToDo` | `add ToDo <description>` | `add ToDo touch grass` |
+| `Deadline` | `add Deadline <date> <description>` | `add Deadline 2026-12-31 finish assignment` |
+| `Event` | `add Event <start> <end> <description>` | `add Event 2026-01-01 2026-01-02 new years` |
+
+### 💾 Save / Load Persistence
+Your tasks are automatically saved to disk and reloaded on startup. NUKE remembers everything. Even the embarrassing tasks.
+
+### 🖥️ Glitchy JavaFX GUI
+The UI randomly:
+- Shifts the background image around the screen
+- Flickers the green tint
+- Adjusts contrast and saturation
+
+This is a feature, not a bug.
+
+### 🤖 Robot Voice TTS
+NUKE reads all responses aloud using your OS's built-in text-to-speech engine. Because reading is for humans.
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Java 17+
+- Gradle
+
+### Running
+
+```bash
+./gradlew run
+```
+
+### Building the jar
+
+```bash
+./gradlew jar
+java -jar NUCLEAR.jar
+```
+
+---
+
+## 💬 Commands
+
+| Command | Description |
+|---|---|
+| `add <type> <args>` | Add a new task |
+| `list` | List all tasks |
+| `mark <index>` | Mark a task as done |
+| `unmark <index>` | Unmark a task |
+| `delete <index>` | Delete a task |
+| `find <keyword>` | Search tasks by keyword |
+| `save` | Save tasks to disk |
+| `bye` | Exit (NUKE will miss you. Maybe.) |
+
+---
+
+## 🏗️ Project Structure
 
 ```
-expected output
+src/
+├── main/java/
+│   ├── process/        # Business logic
+│   │   ├── Action.java         — command implementations
+│   │   ├── Process.java        — reflection-based command routing
+│   │   ├── Task.java           — base task class
+│   │   ├── ToDoTask.java       — todo task type
+│   │   ├── DeadlinesTask.java  — deadline task type
+│   │   ├── EventsTask.java     — event task type
+│   │   └── TaskList.java       — task list with persistence
+│   ├── ui/             # JavaFX GUI
+│   │   ├── MainWindow.java     — main controller
+│   │   ├── DialogBox.java      — chat bubble component
+│   │   ├── Nuke.java           — chatbot logic
+│   │   ├── VoiceEngine.java    — OS text-to-speech
+│   │   └── Launcher.java       — JavaFX entry point
+│   └── data/
+│       └── Bank.java           — ASCII art and strings
+└── test/java/          # JUnit 5 tests
 ```
 
-## Feature ABC
+---
 
-// Feature details
+## 🧪 Running Tests
 
+```bash
+./gradlew test
+```
 
-## Feature XYZ
+Tests cover command processing, task creation, and save/load behaviour. They do not cover the glitch effects because chaos cannot be unit tested.
 
-// Feature details
+---
+
+## ⚙️ Configuration
+
+NUKE reads from `config/config.txt` on startup to locate the commands and save files. If you move things around and it breaks, that's on you.
+
+---
+
+## 🪦 Known Issues
+
+- The glitch effect is permanent and cannot be turned off
+- The robot voice will read your most embarrassing tasks aloud
+- `Microsoft Sam` is not available on all Windows installs and NUKE is upset about it
+
+---
+
+## 📜 Acknowledgements
+
+- [JavaFX](https://openjfx.io/) — for the GUI
+- [JUnit 5](https://junit.org/junit5/) — for the tests
+- [system-lambda](https://github.com/stefanbirkner/system-lambda) — for capturing stdout in tests
+- Whoever invented deadlines — you know what you did
