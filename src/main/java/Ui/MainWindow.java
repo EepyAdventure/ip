@@ -1,5 +1,7 @@
 package ui;
 
+import java.nio.file.Paths;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -13,8 +15,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-
-import java.nio.file.Paths;
 
 /**
  * Controller for the main GUI.
@@ -152,6 +152,7 @@ public class MainWindow extends AnchorPane {
     public void setNuke(Nuke n) {
         nuke = n;
         nuke.start(Paths.get("config", "config.txt").toString());
+        VoiceEngine.init();
     }
 
     /**
@@ -172,7 +173,9 @@ public class MainWindow extends AnchorPane {
                     DialogBox.getDukeDialog(response, dukeImage)
             );
             userInput.clear();
+            VoiceEngine.speak(response); // speak the response
             if (!nuke.isRunning()) {
+                VoiceEngine.shutdown();
                 javafx.application.Platform.exit();
             }
         }

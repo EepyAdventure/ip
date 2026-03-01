@@ -11,14 +11,19 @@ public class Task {
             "Task", " ",
             "Deadline", "D",
             "Event", "E",
-            "ToDo", "T"
+            "ToDo", "T",
+            "DoAfter", "A",
+            "DoWithinPeriod", "P"
     );
     private static final Map<String, Class> taskTypeToClass = Map.of(
             "Task", Task.class,
             "Deadline", DeadlinesTask.class,
             "Event", EventsTask.class,
-            "ToDo", ToDoTask.class
+            "ToDo", ToDoTask.class,
+            "DoAfter", DoAfterTask.class,
+            "DoWithinPeriod", DoWithinPeriodTask.class
     );
+    protected boolean isTimeSensitive = false;
     private final String description;
     private final String taskType;
     private boolean status;
@@ -32,6 +37,7 @@ public class Task {
         this.status = Boolean.parseBoolean(description[0]);
         this.description = String.join(" ", Arrays.copyOfRange(description, 1, description.length));
         this.taskType = "Task";
+        this.isTimeSensitive = false;
     }
 
     /**
@@ -106,6 +112,10 @@ public class Task {
     public Task setStatus(boolean status) {
         this.status = status;
         return this;
+    }
+
+    public boolean isTimeSensitive() {
+        return this.isTimeSensitive;
     }
 
     /**

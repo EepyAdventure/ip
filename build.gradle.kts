@@ -18,6 +18,12 @@ checkstyle {
 
 repositories {
     mavenCentral()
+    exclusiveContent {
+        forRepository {
+            maven { url = uri("https://raw.githubusercontent.com/DFKI-MLT/Maven-Repository/main") }
+        }
+        filter { includeGroup("de.dfki.lt.jtok") }
+    }
 }
 
 dependencies {
@@ -50,7 +56,10 @@ dependencies {
 
 application {
     mainClass.set("ui.Launcher") // fully qualified class name
-    applicationDefaultJvmArgs = listOf("-Dfile.encoding=UTF-8")
+    applicationDefaultJvmArgs = listOf(
+        "-Dfile.encoding=UTF-8",
+        "-Djavax.sound.sampled.SourceDataLine=#REALTEK HD AUDIO 2ND OUTPUT"
+    )
 }
 tasks.jar {
     archiveFileName.set("NUCLEAR.jar")
@@ -62,6 +71,19 @@ tasks.jar {
         configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }
     })
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from({
+        configurations.runtimeClasspath.get().map { 
+            if (it.isDirectory) it else zipTree(it) 
+        }
+    })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    
+    // FreeTTS needs this manifest entry to find voices inside the jar
+    manifest {
+        attributes["Main-Class"] = "ui.Launcher"
+        attributes["Class-Path"] = configurations.runtimeClasspath.get()
+            .joinToString(" ") { it.name }
+    }
 }
 tasks.test {
     useJUnitPlatform()

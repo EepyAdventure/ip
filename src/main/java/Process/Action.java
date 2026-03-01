@@ -69,7 +69,7 @@ public abstract class Action {
         Task task = Task.makeTask(taskType, fullDescription);
         taskList.add(task);
         assert taskList.contains(task) : "Task was not added to list";
-        System.out.print("Task Added to list%n");
+        System.out.printf("Task Added to list%n");
         System.out.printf("  %s%n", task);
         System.out.printf("Now you have %d tasks in the list%n", taskList.size());
         return true;
