@@ -152,6 +152,7 @@ public class MainWindow extends AnchorPane {
     public void setNuke(Nuke n) {
         nuke = n;
         nuke.start(Paths.get("config", "config.txt").toString());
+        VoiceEngine.init();
     }
 
     /**
@@ -172,7 +173,9 @@ public class MainWindow extends AnchorPane {
                     DialogBox.getDukeDialog(response, dukeImage)
             );
             userInput.clear();
+            VoiceEngine.speak(response); // speak the response
             if (!nuke.isRunning()) {
+                VoiceEngine.shutdown();
                 javafx.application.Platform.exit();
             }
         }

@@ -12,5 +12,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Compile
-        run: find src -name "*.java" | xargs javac -d out
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Compile with Gradle
+        run: ./gradlew compileJava

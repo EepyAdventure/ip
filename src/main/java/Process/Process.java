@@ -1,6 +1,7 @@
 package process;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -133,8 +134,13 @@ public class Process {
                 }
             }
             return (boolean) m.invoke(null, finalArgs);
-        } catch (NukeException e) {
-            System.out.println(e.getMessage());
+        } catch (NukeException | InvocationTargetException e) {
+            Throwable cause = e;
+            while (cause instanceof InvocationTargetException) {
+                cause = cause.getCause();
+            }
+            // guard against a null cause at the bottom of the chain
+            System.out.println(cause != null ? cause.getMessage() : e.getMessage());
             return true;
         }
     }

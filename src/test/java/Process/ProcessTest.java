@@ -22,8 +22,8 @@ public class ProcessTest {
 
     @BeforeEach
     void initEach() throws Exception {
-        process = Process.init(".\\config\\config.txt");
-        configure = new File(".\\config\\config.txt");
+        process = Process.init(Paths.get("config", "config.txt").toString());
+        configure = new File(Paths.get("config", "config.txt").toString());
         Scanner scanner = new Scanner(configure);
         scanner.nextLine();
         saves = Paths.get(scanner.nextLine());
@@ -40,7 +40,7 @@ public class ProcessTest {
         String output = tapSystemOut(() -> {
             process.process("echo hello world");
         });
-        assertEquals("hello world\n", output);
+        assertEquals("hello world", output.trim());
     }
 
     /**
@@ -71,7 +71,7 @@ public class ProcessTest {
             process.process("add Task slime");
         });
         listCount = listCount + 1;
-        assertEquals(String.format("Task Added to list\n  %s\nNow you have %d tasks in the list\n",
+        assertEquals(String.format("Task Added to list%n  %s%nNow you have %d tasks in the list%n",
                 Task.makeTask("Task", "false", "slime"), listCount), output);
         output = tapSystemOut(() -> {
             process.process("list");
