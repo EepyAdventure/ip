@@ -53,11 +53,15 @@ application {
     applicationDefaultJvmArgs = listOf("-Dfile.encoding=UTF-8")
 }
 tasks.jar {
-    archiveFileName.set("NUCLEAR.jar") // custom name
-    destinationDirectory.set(project.rootDir) // custom folder
+    archiveFileName.set("NUCLEAR.jar")
+    destinationDirectory.set(project.rootDir)
     manifest {
-        attributes["Main-Class"] = "ui.Nuke"
+        attributes["Main-Class"] = "ui.Launcher"
     }
+    from({
+        configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }
+    })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 tasks.test {
     useJUnitPlatform()
