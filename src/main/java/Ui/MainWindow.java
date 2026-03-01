@@ -1,5 +1,7 @@
 package ui;
 
+import java.nio.file.Paths;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -13,8 +15,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-
-import java.nio.file.Paths;
 
 /**
  * Controller for the main GUI.
