@@ -3,6 +3,7 @@ package process;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -19,7 +20,8 @@ public class TaskList extends ArrayList<Task> {
      * @throws Exception if there is an error reading the file and converting it to Task objects
      */
     public TaskList(Path save) throws Exception {
-        if (!Files.readAllLines(save).isEmpty()) {
+        List<String> lines = Files.readAllLines(save);
+        if (!lines.isEmpty()) {
             Scanner permLines = new Scanner(save);
             String type;
             String[] line;

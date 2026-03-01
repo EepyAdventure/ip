@@ -14,6 +14,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
+import java.nio.file.Paths;
+
 /**
  * Controller for the main GUI.
  */
@@ -149,7 +151,7 @@ public class MainWindow extends AnchorPane {
     /** Injects the Duke instance */
     public void setNuke(Nuke n) {
         nuke = n;
-        nuke.start(".\\config\\config.txt");
+        nuke.start(Paths.get("config", "config.txt").toString());
     }
 
     /**
