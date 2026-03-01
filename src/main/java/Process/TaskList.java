@@ -3,6 +3,7 @@ package process;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -18,7 +19,8 @@ public class TaskList extends ArrayList<Task> {
      * @throws Exception if there is an error reading the file and converting it to Task objects
      */
     public TaskList(Path save) throws Exception {
-        if (!Files.readAllLines(save).isEmpty()) {
+        List<String> lines = Files.readAllLines(save);
+        if (!lines.isEmpty()) {
             Scanner permLines = new Scanner(save);
             String type;
             String[] line;
@@ -59,7 +61,7 @@ public class TaskList extends ArrayList<Task> {
      */
     @Override
     public String toString() {
-        String format = "%d. %s \n";
+        String format = "%d. %s %n";
         StringBuilder res = new StringBuilder();
         for (int i = 0; i < this.size(); i++) {
             res.append(String.format(format, i, super.get(i).toString()));
@@ -73,7 +75,7 @@ public class TaskList extends ArrayList<Task> {
      * @return byte[] that is the save format of this TaskList object
      */
     public byte[] toSave() {
-        String format = "%s \n";
+        String format = "%s %n";
         StringBuilder res = new StringBuilder();
         for (Task task : this) {
             res.append(String.format(format, task.toSave()));

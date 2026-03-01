@@ -10,7 +10,7 @@ public class ToDoTask extends Task {
     /**
      * Constructor for a new ToDoTask object
      *
-     * @param description
+     * @param description description of the ToDoTask object
      */
     protected ToDoTask(String... description) {
         super("ToDo", Arrays.copyOfRange(description, 1, description.length));

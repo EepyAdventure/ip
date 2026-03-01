@@ -8,7 +8,7 @@ import process.Process;
  * Main executable class to handle UI
  */
 public class Nuke {
-    private static Process process;
+    private Process process;
     private boolean running = true;
 
     /**
@@ -33,7 +33,7 @@ public class Nuke {
             result[0] = process.process(input);
         });
         running = result[0];
-        return output;
+        return output.trim();
     }
 
     public boolean isRunning() {

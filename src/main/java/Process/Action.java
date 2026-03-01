@@ -12,23 +12,19 @@ import java.nio.file.StandardOpenOption;
  */
 
 public abstract class Action {
-    private static Process process;
     private static TaskList taskList;
     private static Path save;
 
     /**
      * Method that initializes pointers and references
      *
-     * @param process process Action is linked to
      * @param taskList tasklist Action acts on
      * @param save save location Action acts on
      * @return signal to continue program execution
      */
-    protected static boolean set(Process process, TaskList taskList, Path save) {
-        assert process != null : "Process cannot be null";
+    protected static boolean set(TaskList taskList, Path save) {
         assert taskList != null : "TaskList cannot be null";
         assert save != null : "Save path cannot be null";
-        Action.process = process;
         Action.taskList = taskList;
         Action.save = save;
         return true;
@@ -51,7 +47,7 @@ public abstract class Action {
      * @return signal to continue program execution
      */
     protected static boolean echo(String... echo) {
-        System.out.printf(String.join(" ", echo) + "\n");
+        System.out.println(String.join(" ", echo));
         return true;
     }
 
@@ -73,9 +69,9 @@ public abstract class Action {
         Task task = Task.makeTask(taskType, fullDescription);
         taskList.add(task);
         assert taskList.contains(task) : "Task was not added to list";
-        System.out.print("Task Added to list\n");
-        System.out.printf("  %s\n", task);
-        System.out.printf("Now you have %d tasks in the list\n", taskList.size());
+        System.out.print("Task Added to list%n");
+        System.out.printf("  %s%n", task);
+        System.out.printf("Now you have %d tasks in the list%n", taskList.size());
         return true;
     }
 
@@ -88,12 +84,12 @@ public abstract class Action {
     protected static boolean delete(String index) {
         int idx = Integer.parseInt(index) - 1;
         assert idx >= 0 && idx < taskList.size() : "Delete index out of bounds: " + idx;
-        Task task = taskList.get(Integer.parseInt(index) - 1);
+        Task task = taskList.get(idx - 1);
         assert task != null : "Task does not exist";
-        taskList.remove(Integer.parseInt(index) - 1);
-        System.out.print("I dragged them out the back\n");
-        System.out.printf("  %s\n", task.toString());
-        System.out.printf("Now you have %d tasks in the list\n", taskList.size());
+        taskList.remove(idx - 1);
+        System.out.print("I dragged them out the back%n");
+        System.out.printf("  %s%n", task.toString());
+        System.out.printf("Now you have %d tasks in the list%n", taskList.size());
         return true;
     }
 
@@ -105,9 +101,8 @@ public abstract class Action {
      */
     protected static boolean mark(String index) {
         Task task = taskList.get(Integer.parseInt(index) - 1).setStatus(true);
-        System.out.print("Task marked as complete\n");
-        System.out.printf("  %s\n", task.toString());
-        taskList.get(Integer.parseInt(index) - 1).setStatus(true);
+        System.out.print("Task marked as complete%n");
+        System.out.printf("  %s%n", task.toString());
         return true;
     }
 
@@ -119,9 +114,8 @@ public abstract class Action {
      */
     protected static boolean unmark(String index) {
         Task task = taskList.get(Integer.parseInt(index) - 1).setStatus(false);
-        System.out.print("Task marked as complete\n");
-        System.out.printf("  %s\n", task.toString());
-        taskList.get(Integer.parseInt(index) - 1).setStatus(false);
+        System.out.print("Task marked as complete%n");
+        System.out.printf("  %s%n", task.toString());
         return true;
     }
 
@@ -161,7 +155,8 @@ public abstract class Action {
     protected static boolean save() {
         try {
             Files.write(save, taskList.toSave(),
-                    StandardOpenOption.CREATE);
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
             System.out.println("You are filled with determination");
         } catch (IOException e) {
             throw new NukeException("Your SAVE file DOES NOT EXIST");

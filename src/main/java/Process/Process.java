@@ -29,52 +29,48 @@ public class Process {
      */
     private Process(String config) {
         try {
+            // Read config file to get commands and saves paths
             File configure = new File(config);
-            Scanner scanner = new Scanner(configure);
-            commands = Paths.get(scanner.nextLine());
-            saves = Paths.get(scanner.nextLine());
-            File commander = commands.toFile();
-            File saver = saves.toFile();
-            scanner = new Scanner(commander);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                Scanner lineScanner = new Scanner(line);
-                String className = lineScanner.next();
-                String methodName = lineScanner.next();
-                List<Class<?>> paramTypes = new ArrayList<>();
-                String curr = "";
-                while (lineScanner.hasNext()) {
-                    curr = lineScanner.next();
-                    if (!lineScanner.hasNext()) {
-                        break;
-                    }
-                    paramTypes.add(Class.forName(curr));
-                }
-                Method method = Class.forName(className).getDeclaredMethod(
-                        methodName,
-                        paramTypes.toArray(new Class<?>[0])
-                );
-                File ref = new File(curr);
-                Scanner mapper = new Scanner(ref);
-                String key;
-                while (mapper.hasNextLine()) {
-                    key = mapper.nextLine();
-                    commandsToMethods.put(key, method);
-                }
+            try (Scanner scanner = new Scanner(configure)) {
+                commands = Paths.get(scanner.nextLine().replace("\\", "/"));
+                saves = Paths.get(scanner.nextLine().replace("\\", "/"));
             }
-            scanner.close();
-            scanner = new Scanner(saver);
-            int count = 0;
-            while (scanner.hasNextLine()) {
-                scanner.nextLine();
-                count++;
-            }
-            Action.set(this, new TaskList(saves), saves);
 
+            // Read commands file to build commandsToMethods map
+            try (Scanner scanner = new Scanner(commands.toFile())) {
+                while (scanner.hasNextLine()) {
+                    String line = scanner.nextLine();
+                    try (Scanner lineScanner = new Scanner(line)) {
+                        String className = lineScanner.next();
+                        String methodName = lineScanner.next();
+                        List<Class<?>> paramTypes = new ArrayList<>();
+                        String curr = "";
+                        while (lineScanner.hasNext()) {
+                            curr = lineScanner.next();
+                            if (!lineScanner.hasNext()) {
+                                break;
+                            }
+                            paramTypes.add(Class.forName(curr));
+                        }
+                        Method method = Class.forName(className).getDeclaredMethod(
+                                methodName,
+                                paramTypes.toArray(new Class<?>[0])
+                        );
+                        File ref = new File(curr.replace("\\", "/"));
+                        try (Scanner mapper = new Scanner(ref)) {
+                            while (mapper.hasNextLine()) {
+                                String key = mapper.nextLine();
+                                commandsToMethods.put(key, method);
+                            }
+                        }
+                    }
+                }
+            }
+
+            Action.set(new TaskList(saves), saves);
         } catch (Exception e) {
             throw new NukeException("config ERROR, why did you lie to me?");
         }
-
     }
 
     /**

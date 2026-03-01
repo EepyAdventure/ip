@@ -20,7 +20,7 @@ public class Task {
             "ToDo", ToDoTask.class
     );
     private final String description;
-    private String taskType = "Task";
+    private final String taskType;
     private boolean status;
 
     /**
@@ -31,6 +31,7 @@ public class Task {
     protected Task(String... description) {
         this.status = Boolean.parseBoolean(description[0]);
         this.description = String.join(" ", Arrays.copyOfRange(description, 1, description.length));
+        this.taskType = "Task";
     }
 
     /**
@@ -40,7 +41,7 @@ public class Task {
      * @param description description of Task object
      */
     protected Task(String taskType, String... description) {
-        this.description = String.join(" ", Arrays.copyOfRange(description, 0, description.length));
+        this.description = String.join(" ", description);
         this.taskType = taskType;
     }
 
