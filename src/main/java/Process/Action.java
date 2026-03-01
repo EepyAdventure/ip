@@ -87,7 +87,7 @@ public abstract class Action {
         Task task = taskList.get(idx - 1);
         assert task != null : "Task does not exist";
         taskList.remove(idx - 1);
-        System.out.print("I dragged them out the back%n");
+        System.out.printf("I dragged them out the back%n");
         System.out.printf("  %s%n", task.toString());
         System.out.printf("Now you have %d tasks in the list%n", taskList.size());
         return true;
@@ -101,7 +101,7 @@ public abstract class Action {
      */
     protected static boolean mark(String index) {
         Task task = taskList.get(Integer.parseInt(index) - 1).setStatus(true);
-        System.out.print("Task marked as complete%n");
+        System.out.printf("Task marked as complete%n");
         System.out.printf("  %s%n", task.toString());
         return true;
     }
@@ -114,7 +114,7 @@ public abstract class Action {
      */
     protected static boolean unmark(String index) {
         Task task = taskList.get(Integer.parseInt(index) - 1).setStatus(false);
-        System.out.print("Task marked as complete%n");
+        System.out.printf("Task marked as complete%n");
         System.out.printf("  %s%n", task.toString());
         return true;
     }

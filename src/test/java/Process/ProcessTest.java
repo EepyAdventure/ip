@@ -55,7 +55,11 @@ public class ProcessTest {
         String output = tapSystemOut(() -> {
             process.process("list");
         });
-        assertEquals(listCount, output.split("\\R").length);
+        if (listCount > 0) {
+            assertEquals(listCount, output.split("\\R").length);
+        } else {
+            assertEquals(1, output.split("\\R").length);
+        }
     }
 
     /**

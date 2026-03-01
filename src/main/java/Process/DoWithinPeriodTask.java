@@ -22,7 +22,7 @@ public class DoWithinPeriodTask extends Task {
      * @throws NukeException is description is invalid
      */
     protected DoWithinPeriodTask(String... description) throws NukeException {
-        super("Event", Arrays.copyOfRange(description, 3, description.length));
+        super("DoWithinPeriod", Arrays.copyOfRange(description, 3, description.length));
         super.setStatus(Boolean.parseBoolean(description[0]));
         // Define two possible formats: with time or just date
         DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
