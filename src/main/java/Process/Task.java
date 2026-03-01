@@ -58,9 +58,11 @@ public class Task {
             throw new NukeException("You forgor the description :skull");
         }
         if (taskTypeToClass.get(taskType) != null) {
-            return (Task) taskTypeToClass.get(taskType)
+            Task newTask = (Task) taskTypeToClass.get(taskType)
                     .getDeclaredConstructor(String[].class)
                     .newInstance((Object) description);
+            assert newTask.getTaskType().equals(taskType) : "Task type mismatch";
+            return newTask;
         } else {
             throw new NukeException("What kinda task is this? May I eat it?");
         }

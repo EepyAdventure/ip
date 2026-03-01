@@ -25,6 +25,9 @@ public abstract class Action {
      * @return signal to continue program execution
      */
     protected static boolean start(Process process, TaskList taskList, Path save) {
+        assert process != null : "Process cannot be null";
+        assert taskList != null : "TaskList cannot be null";
+        assert save != null : "Save path cannot be null";
         Action.process = process;
         Action.taskList = taskList;
         Action.save = save;
@@ -69,9 +72,10 @@ public abstract class Action {
         System.arraycopy(description, 0, fullDescription, 1, description.length);
         Task task = Task.makeTask(taskType, fullDescription);
         taskList.add(task);
-        System.out.printf("Task Added to list\n");
+        assert taskList.contains(task) : "Task was not added to list";
+        System.out.print("Task Added to list\n");
         System.out.printf("  %s\n", task.toString());
-        System.out.printf("Now you have %d tasks in the list\n", taskList.getCount());
+        System.out.printf("Now you have %d tasks in the list\n", taskList.size());
         return true;
     }
 
@@ -82,11 +86,14 @@ public abstract class Action {
      * @return true signal to continue program execution
      */
     protected static boolean delete(String index) {
+        int idx = Integer.parseInt(index) - 1;
+        assert idx >= 0 && idx < taskList.size() : "Delete index out of bounds: " + idx;
         Task task = taskList.get(Integer.parseInt(index) - 1);
+        assert task != null : "Task does not exist";
         taskList.remove(Integer.parseInt(index) - 1);
-        System.out.printf("I dragged them out the back\n");
+        System.out.print("I dragged them out the back\n");
         System.out.printf("  %s\n", task.toString());
-        System.out.printf("Now you have %d tasks in the list\n", taskList.getCount());
+        System.out.printf("Now you have %d tasks in the list\n", taskList.size());
         return true;
     }
 
@@ -98,7 +105,7 @@ public abstract class Action {
      */
     protected static boolean mark(String index) {
         Task task = taskList.get(Integer.parseInt(index) - 1).setStatus(true);
-        System.out.printf("Task marked as complete\n");
+        System.out.print("Task marked as complete\n");
         System.out.printf("  %s\n", task.toString());
         taskList.get(Integer.parseInt(index) - 1).setStatus(true);
         return true;
@@ -112,7 +119,7 @@ public abstract class Action {
      */
     protected static boolean unmark(String index) {
         Task task = taskList.get(Integer.parseInt(index) - 1).setStatus(false);
-        System.out.printf("Task marked as complete\n");
+        System.out.print("Task marked as complete\n");
         System.out.printf("  %s\n", task.toString());
         taskList.get(Integer.parseInt(index) - 1).setStatus(false);
         return true;
@@ -130,7 +137,7 @@ public abstract class Action {
 
     protected static boolean find(String substring) {
         TaskList res = taskList.find(substring);
-        if (res.getCount() > 0) {
+        if (!res.isEmpty()) {
             System.out.println("We found private Ryan, Here are the matches");
             System.out.println(res);
         } else {

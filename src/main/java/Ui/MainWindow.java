@@ -146,9 +146,6 @@ public class MainWindow extends AnchorPane {
         timeline.play();
     }
 
-
-
-
     /** Injects the Duke instance */
     public void setNuke(Nuke n) {
         nuke = n;
@@ -173,6 +170,9 @@ public class MainWindow extends AnchorPane {
                     DialogBox.getDukeDialog(response, dukeImage)
             );
             userInput.clear();
+            if (!nuke.isRunning()) {
+                javafx.application.Platform.exit();
+            }
         }
     }
 }

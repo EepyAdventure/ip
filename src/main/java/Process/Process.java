@@ -129,7 +129,7 @@ public class Process {
                         ? Arrays.copyOfRange(args, fixedCount, args.length)
                         : new String[0];
                 finalArgs[fixedCount] = varargs;
-
+                assert finalArgs[fixedCount] != null : "Varargs array should not be null";
             } else {
                 // No varargs: just map tokens directly
                 for (int i = 0; i < paramTypes.length; i++) {

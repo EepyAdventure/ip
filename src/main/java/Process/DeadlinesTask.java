@@ -34,7 +34,7 @@ public class DeadlinesTask extends Task {
         } catch (Exception e) {
             throw new NukeException("at the end of a time is another unrecognised time format");
         }
-
+        assert this.deadline != null : "Deadline was not initialized";
     }
 
     /**

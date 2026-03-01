@@ -46,7 +46,9 @@ public class EventsTask extends Task {
         } catch (Exception e) {
             throw new NukeException("at the end of a time is another unrecognised time format");
         }
-
+        assert this.startTime != null : "startTime was not initialized";
+        assert this.endTime != null : "endTime was not initialized";
+        assert !this.endTime.isBefore(this.startTime) : "endTime is before startTime";
     }
 
     /**

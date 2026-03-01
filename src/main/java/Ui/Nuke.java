@@ -13,8 +13,7 @@ import process.Process;
  */
 public class Nuke {
     private static Process process;
-    private static String input;
-    private static final Scanner scanner = new Scanner(System.in);
+    private boolean running = true;
 
     /**
      * Method to initialize and start the program
@@ -33,40 +32,18 @@ public class Nuke {
     }
 
     /**
-     * Method to execute the chat function of the program
-     * Chat will loop until process returns false
-     */
-    @Deprecated
-    protected void chat() {
-        try {
-            input = scanner.nextLine();
-            while (process.process(input)) {
-                System.out.println(Bank.LINE);
-                input = scanner.nextLine();
-            }
-        } catch (InvocationTargetException e) {
-            System.out.println(e.getCause().getMessage());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    /**
-     * Method to terminate the program
-     */
-    @Deprecated
-    protected void exit() {
-        System.out.println(Bank.LOGO_AME);
-        System.out.println(Bank.FAREWELL);
-    }
-
-    /**
      * Generates a response for the user's chat message.
      */
     public String getResponse(String input) throws Exception {
+        boolean[] result = {true};
         String output = tapSystemOut(() -> {
-            process.process(input);
+            result[0] = process.process(input);
         });
+        running = result[0];
         return output;
+    }
+
+    public boolean isRunning() {
+        return running;
     }
 }

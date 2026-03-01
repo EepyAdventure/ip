@@ -3,7 +3,6 @@ package process;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -11,7 +10,6 @@ import java.util.stream.Collectors;
  * A class that is an arrayList of tasks
  */
 public class TaskList extends ArrayList<Task> {
-    private int count;
 
     /**
      * Constructor for a new TaskList object
@@ -34,62 +32,9 @@ public class TaskList extends ArrayList<Task> {
 
     /**
      * Constructor for a new TaskList object
-     *
-     * @param tasks Array of tasks to add
-     * @throws Exception is thrown if there was an error adding Tasks to the list
-     */
-    public TaskList(Task[] tasks) throws Exception {
-        super();
-        Collections.addAll(this, tasks);
-    }
-
-    /**
-     * Constructor for a new TaskList object
      */
     public TaskList() {
         super();
-    }
-
-    /**
-     * Getter for the count of Tasks in this TaskList object
-     *
-     * @return count of Tasks in this TaskList object
-     */
-    public int getCount() {
-        return this.count;
-    }
-
-    /**
-     * Removes all Tasks in this TaskList object
-     */
-    @Override
-    public void clear() {
-        this.count = 0;
-        super.clear();
-    }
-
-    /**
-     * Method that adds a new Task to this TaskList object
-     *
-     * @param task task to be added to this TaskList Object
-     * @return boolean to signal that the Task has been added successfully
-     */
-    @Override
-    public boolean add(Task task) {
-        this.count++;
-        return super.add(task);
-    }
-
-    /**
-     * Method that removes a Task from this TaskList object based on its index
-     *
-     * @param index the index of the Task to be removed from this TaskList object
-     * @return new TaskList without the object
-     */
-    @Override
-    public Task remove(int index) {
-        this.count--;
-        return super.remove(index);
     }
 
     /**
@@ -99,10 +44,12 @@ public class TaskList extends ArrayList<Task> {
      * @return TaskList of all tasks that contains a specific substring in its description
      */
     public TaskList find(String substring) {
-        return this.stream()
+        assert substring != null : "Cannot search for null substring";
+        TaskList res = this.stream()
                 .filter(task -> task.getDescription().contains(substring))
                 .collect(Collectors.toCollection(TaskList::new));
-
+        assert res.size() <= this.size() : "find returned more results than exist";
+        return res;
     }
 
     /**
@@ -113,11 +60,11 @@ public class TaskList extends ArrayList<Task> {
     @Override
     public String toString() {
         String format = "%d. %s \n";
-        String res = "";
-        for (int i = 0; i < this.count; i++) {
-            res = res + String.format(format, i, super.get(i).toString());
+        StringBuilder res = new StringBuilder();
+        for (int i = 0; i < this.size(); i++) {
+            res.append(String.format(format, i, super.get(i).toString()));
         }
-        return res;
+        return res.toString();
     }
 
     /**
@@ -127,10 +74,11 @@ public class TaskList extends ArrayList<Task> {
      */
     public byte[] toSave() {
         String format = "%s \n";
-        String res = "";
-        for (int i = 0; i < this.count; i++) {
-            res = res + String.format(format, super.get(i).toSave());
+        StringBuilder res = new StringBuilder();
+        for (Task task : this) {
+            res.append(String.format(format, task.toSave()));
+            assert task.toSave() != null: "Task is not empty";
         }
-        return res.getBytes();
+        return res.toString().getBytes();
     }
 }
