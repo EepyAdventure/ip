@@ -24,7 +24,7 @@ public abstract class Action {
      * @param save save location Action acts on
      * @return signal to continue program execution
      */
-    protected static boolean start(Process process, TaskList taskList, Path save) {
+    protected static boolean set(Process process, TaskList taskList, Path save) {
         assert process != null : "Process cannot be null";
         assert taskList != null : "TaskList cannot be null";
         assert save != null : "Save path cannot be null";
@@ -74,7 +74,7 @@ public abstract class Action {
         taskList.add(task);
         assert taskList.contains(task) : "Task was not added to list";
         System.out.print("Task Added to list\n");
-        System.out.printf("  %s\n", task.toString());
+        System.out.printf("  %s\n", task);
         System.out.printf("Now you have %d tasks in the list\n", taskList.size());
         return true;
     }
@@ -135,6 +135,12 @@ public abstract class Action {
         return true;
     }
 
+    /**
+     * Method that lists all tasks in tasklist with a description containing a specific substring
+     *
+     * @param substring to find in the description of tasks
+     * @return true signal to continue program execution
+     */
     protected static boolean find(String substring) {
         TaskList res = taskList.find(substring);
         if (!res.isEmpty()) {
@@ -145,6 +151,7 @@ public abstract class Action {
         }
         return true;
     }
+
     /**
      * Method that saves current state of taskList to save
      *

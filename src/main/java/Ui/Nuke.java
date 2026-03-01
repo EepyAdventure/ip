@@ -2,10 +2,6 @@ package ui;
 
 import static com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOut;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Scanner;
-
-import data.Bank;
 import process.Process;
 
 /**
@@ -23,9 +19,6 @@ public class Nuke {
     protected void start(String config) {
         try {
             process = Process.init(config);
-            System.out.println(Bank.LOGO_LOBOTOMY);
-            System.out.println(Bank.GREETING);
-            System.out.println(Bank.LINE);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

@@ -69,7 +69,7 @@ public class Process {
                 scanner.nextLine();
                 count++;
             }
-            Action.start(this, new TaskList(saves), saves);
+            Action.set(this, new TaskList(saves), saves);
 
         } catch (Exception e) {
             throw new NukeException("config ERROR, why did you lie to me?");

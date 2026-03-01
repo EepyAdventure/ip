@@ -8,7 +8,6 @@ import java.io.ByteArrayInputStream;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import data.Bank;
 
 public class NukeTest {
     /**
@@ -24,11 +23,7 @@ public class NukeTest {
         System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
         String output = tapSystemOut(() -> {
         });
-        String expected = Bank.LOGO_LOBOTOMY + System.lineSeparator()
-                        + Bank.GREETING + System.lineSeparator()
-                        + Bank.LINE + System.lineSeparator()
-                        + Bank.LOGO_AME + System.lineSeparator()
-                        + Bank.FAREWELL + System.lineSeparator();
+        String expected = "Nuke is launching";
         assertEquals(expected, output);
     }
 }
