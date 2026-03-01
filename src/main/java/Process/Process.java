@@ -2,6 +2,7 @@ package process;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -57,10 +58,10 @@ public class Process {
                 File ref = new File(curr);
                 Scanner mapper = new Scanner(ref);
                 String key;
-                while (mapper.hasNextLine()) {
-                    key = mapper.nextLine();
-                    commandsToMethods.put(key, method);
-                }
+                final Method finalMethod = method;
+                Files.lines(ref.toPath())
+                        .filter(k -> !k.isBlank())
+                        .forEach(k -> commandsToMethods.put(k, finalMethod));
             }
             scanner.close();
             scanner = new Scanner(saver);

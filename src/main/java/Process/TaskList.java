@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * A class that is an arrayList of tasks
@@ -59,12 +60,9 @@ public class TaskList extends ArrayList<Task> {
      */
     @Override
     public String toString() {
-        String format = "%d. %s \n";
-        StringBuilder res = new StringBuilder();
-        for (int i = 0; i < this.size(); i++) {
-            res.append(String.format(format, i, super.get(i).toString()));
-        }
-        return res.toString();
+        return IntStream.range(0, this.size())
+                .mapToObj(i -> String.format("%d. %s%n", i, super.get(i).toString()))
+                .collect(Collectors.joining());
     }
 
     /**
@@ -73,12 +71,9 @@ public class TaskList extends ArrayList<Task> {
      * @return byte[] that is the save format of this TaskList object
      */
     public byte[] toSave() {
-        String format = "%s \n";
-        StringBuilder res = new StringBuilder();
-        for (Task task : this) {
-            res.append(String.format(format, task.toSave()));
-            assert task.toSave() != null: "Task is not empty";
-        }
-        return res.toString().getBytes();
+        return this.stream()
+                .map(task -> task.toSave() + System.lineSeparator())
+                .collect(Collectors.joining())
+                .getBytes();
     }
 }
