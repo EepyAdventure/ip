@@ -152,7 +152,16 @@ public class MainWindow extends AnchorPane {
     public void setNuke(Nuke n) {
         nuke = n;
         nuke.start(Paths.get("config", "config.txt").toString());
-        VoiceEngine.init();
+        // kill TTS when window is closed with the X button
+        root.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.windowProperty().addListener((obs2, oldWindow, newWindow) -> {
+                    if (newWindow != null) {
+                        newWindow.setOnCloseRequest(e -> VoiceEngine.shutdown());
+                    }
+                });
+            }
+        });
     }
 
     /**

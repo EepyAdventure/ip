@@ -10,12 +10,17 @@ public class VoiceEngine {
     private static final String OS = System.getProperty("os.name").toLowerCase();
     private static final String POWERSHELL =
             "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe";
+    private static Process currentProcess;
 
     /** No-op — OS handles resources per-call */
     public static void init() {}
 
     /** No-op — OS cleans up per-call resources automatically */
-    public static void shutdown() {}
+    public static void shutdown() {
+        if (currentProcess != null && currentProcess.isAlive()) {
+            currentProcess.destroyForcibly();
+        }
+    }
 
     /**
      * Speaks the given text on a background thread using the OS TTS engine.
@@ -27,11 +32,12 @@ public class VoiceEngine {
         if (text == null || text.isBlank()) {
             return;
         }
-        // strip characters that could break shell commands
         String clean = text.replaceAll("[^a-zA-Z0-9 .,!?]", " ").trim();
         if (clean.isBlank()) {
             return;
         }
+        // kill any currently playing speech before starting new one
+        shutdown();
         new Thread(() -> synthesize(clean)).start();
     }
 
@@ -47,13 +53,10 @@ public class VoiceEngine {
                 System.err.println("VoiceEngine: unsupported OS — " + OS);
                 return;
             }
-            int exit = new ProcessBuilder(cmd)
+            currentProcess = new ProcessBuilder(cmd)
                     .redirectErrorStream(true)
-                    .start()
-                    .waitFor();
-            if (exit != 0) {
-                System.err.println("VoiceEngine: TTS exited with code " + exit);
-            }
+                    .start();
+            currentProcess.waitFor();
         } catch (Exception e) {
             System.err.println("VoiceEngine: TTS failed — " + e.getMessage());
         }
