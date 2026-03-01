@@ -15,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import process.Bootstrap;
 
 /**
  * Controller for the main GUI.
@@ -151,7 +152,10 @@ public class MainWindow extends AnchorPane {
     /** Injects the Duke instance */
     public void setNuke(Nuke n) {
         nuke = n;
-        nuke.start(Paths.get("config", "config.txt").toString());
+        System.out.println("=== CONFIG PATH: " + Bootstrap.getConfigPath() + " ===");
+        System.out.println("=== CONFIG EXISTS: " + Bootstrap.getConfigPath().toFile().exists() + " ===");
+        nuke.start(Bootstrap.getConfigPath().toString());
+        VoiceEngine.init();
         // kill TTS when window is closed with the X button
         root.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {

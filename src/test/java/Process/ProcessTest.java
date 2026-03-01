@@ -58,7 +58,7 @@ public class ProcessTest {
         if (listCount > 0) {
             assertEquals(listCount, output.split("\\R").length);
         } else {
-            assertEquals(1, output.split("\\R").length);
+            assertEquals(2, output.split("\\R").length);
         }
     }
 

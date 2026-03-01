@@ -125,7 +125,12 @@ public abstract class Action {
      * @return true signal to continue program execution
      */
     protected static boolean list() {
-        System.out.printf(taskList.toString());
+        if (!taskList.isEmpty()) {
+            System.out.printf(taskList.toString());
+        } else {
+            System.out.printf("THERE IS NOTHING HERE %n");
+            System.out.printf("IT IS EMPTIER THAN MY SKULL");
+        }
         return true;
     }
 

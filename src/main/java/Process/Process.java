@@ -17,7 +17,6 @@ import java.util.Scanner;
  * Class handling the file accesses and system calls
  * Processes all inputs, including system start
  */
-
 public class Process {
     private Path commands;
     private Path saves;
@@ -75,12 +74,14 @@ public class Process {
     }
 
     /**
-     * Factory method to make a new Process object
+     * Factory method to make a new Process object.
+     * Bootstraps config files on first launch before reading them.
      *
      * @param config config file path in string
      * @return a new Process object
      */
     public static Process init(String config) {
+        Bootstrap.ensureFilesExist();
         return new Process(config);
     }
 
@@ -92,8 +93,7 @@ public class Process {
      * @throws NukeException when the input is invalid
      */
     public boolean process(String input) throws Exception {
-        try {
-            Scanner command = new Scanner(input);
+        try (Scanner command = new Scanner(input)) {
             Method m = commandsToMethods.get(command.next());
 
             if (m == null) {
@@ -139,10 +139,8 @@ public class Process {
             while (cause instanceof InvocationTargetException) {
                 cause = cause.getCause();
             }
-            // guard against a null cause at the bottom of the chain
             System.out.println(cause != null ? cause.getMessage() : e.getMessage());
             return true;
         }
     }
-
 }

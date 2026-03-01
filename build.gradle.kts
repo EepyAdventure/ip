@@ -10,6 +10,7 @@ plugins {
     id("java")
     application
     id("checkstyle")
+    id("io.github.goooler.shadow") version "8.1.8"
 }
 
 checkstyle {
@@ -67,6 +68,7 @@ tasks.jar {
     manifest {
         attributes["Main-Class"] = "ui.Launcher"
     }
+    from(sourceSets.main.get().output)
     from({
         configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }
     })
@@ -85,6 +87,9 @@ tasks.jar {
             .joinToString(" ") { it.name }
     }
 }
+tasks.shadowJar {
+    archiveFileName.set("NUKE_release_v0.2.1.jar")
+}
 tasks.test {
     useJUnitPlatform()
 
@@ -98,4 +103,10 @@ tasks.test {
         showStandardStreams = false
     }
 }
-
+tasks.register<Zip>("releaseZip") {
+    archiveFileName.set("NUCLEAR.zip")
+    destinationDirectory.set(project.rootDir)
+    from(tasks.jar) // include the jar
+    from("config") { into("config") } // include config folder
+    from("data") { into("data") } // include save folder if needed
+}
