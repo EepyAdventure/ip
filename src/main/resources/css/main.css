@@ -1,0 +1,52 @@
+.root {
+    -fx-background-color: #2e372e;   /* dark grey background */
+    -fx-background-repeat: repeat;
+    -fx-background-size: 100% 100%;
+}
+
+/* Text fields with green glow */
+.text-field {
+    -fx-background-color: #1a1a1a;
+    -fx-text-fill: #00ff00;          /* matrix green text */
+    -fx-font: 20px "Consolas";
+    -fx-prompt-text-fill: #008000;   /* darker green for placeholder */
+}
+
+/* Buttons styled in green */
+.button {
+    -fx-background-color: #006400;   /* dark green */
+    -fx-text-fill: #00ff00;
+    -fx-font: bold 16px "Consolas";
+}
+
+.button:hover {
+    -fx-background-color: #00aa00;
+    -fx-font-size: 18px;
+}
+
+.button:pressed {
+    -fx-background-color: #00ff00;
+    -fx-font-size: 20px;
+}
+
+/* Scroll styling */
+.scroll-pane,
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar {
+    -fx-font-size: 10px;
+    -fx-background-color: #2e2e2e;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #00ff00;
+    -fx-background-radius: 1em;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-pref-height: 0;
+    -fx-opacity: 0;
+}

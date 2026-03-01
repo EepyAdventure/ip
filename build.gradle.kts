@@ -5,11 +5,11 @@
  * Learn more about Gradle by exploring our Samples at https://docs.gradle.org/9.3.1/samples
  * This project uses @Incubating APIs which are subject to change.
  */
+val javaFxVersion = "17.0.7"
 plugins {
     id("java")
     application
     id("checkstyle")
-    // other plugins
 }
 
 checkstyle {
@@ -22,14 +22,34 @@ repositories {
 
 dependencies {
     implementation("com.google.guava:guava:32.1.2-jre")
+
+    implementation("org.openjfx:javafx-base:$javaFxVersion:win")
+    implementation("org.openjfx:javafx-base:$javaFxVersion:mac")
+    implementation("org.openjfx:javafx-base:$javaFxVersion:linux")
+
+    implementation("org.openjfx:javafx-controls:$javaFxVersion:win")
+    implementation("org.openjfx:javafx-controls:$javaFxVersion:mac")
+    implementation("org.openjfx:javafx-controls:$javaFxVersion:linux")
+
+    implementation("org.openjfx:javafx-fxml:$javaFxVersion:win")
+    implementation("org.openjfx:javafx-fxml:$javaFxVersion:mac")
+    implementation("org.openjfx:javafx-fxml:$javaFxVersion:linux")
+
+    implementation("org.openjfx:javafx-graphics:$javaFxVersion:win")
+    implementation("org.openjfx:javafx-graphics:$javaFxVersion:mac")
+    implementation("org.openjfx:javafx-graphics:$javaFxVersion:linux")
+
+    implementation("com.github.stefanbirkner:system-lambda:1.2.1")
+    
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
+
 }
 
 application {
-    mainClass.set("ui.Nuke") // fully qualified class name
+    mainClass.set("ui.Launcher") // fully qualified class name
     applicationDefaultJvmArgs = listOf("-Dfile.encoding=UTF-8")
 }
 tasks.jar {

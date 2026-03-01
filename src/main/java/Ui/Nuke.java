@@ -1,5 +1,7 @@
 package ui;
 
+import static com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOut;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Scanner;
 
@@ -15,22 +17,11 @@ public class Nuke {
     private static final Scanner scanner = new Scanner(System.in);
 
     /**
-     * Main method and program to be run
-     *
-     * @param args
-     */
-    public static void main(String[] args) {
-        start(".\\config\\config.txt");
-        chat();
-        exit();
-    }
-
-    /**
      * Method to initialize and start the program
      *
      * @param config string representation of the path to the config file
      */
-    protected static void start(String config) {
+    protected void start(String config) {
         try {
             process = Process.init(config);
             System.out.println(Bank.LOGO_LOBOTOMY);
@@ -45,7 +36,8 @@ public class Nuke {
      * Method to execute the chat function of the program
      * Chat will loop until process returns false
      */
-    protected static void chat() {
+    @Deprecated
+    protected void chat() {
         try {
             input = scanner.nextLine();
             while (process.process(input)) {
@@ -62,8 +54,19 @@ public class Nuke {
     /**
      * Method to terminate the program
      */
-    protected static void exit() {
+    @Deprecated
+    protected void exit() {
         System.out.println(Bank.LOGO_AME);
         System.out.println(Bank.FAREWELL);
+    }
+
+    /**
+     * Generates a response for the user's chat message.
+     */
+    public String getResponse(String input) throws Exception {
+        String output = tapSystemOut(() -> {
+            process.process(input);
+        });
+        return output;
     }
 }
