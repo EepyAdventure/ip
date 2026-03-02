@@ -6,6 +6,10 @@
  * This project uses @Incubating APIs which are subject to change.
  */
 val javaFxVersion = "17.0.7"
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 plugins {
     id("java")
     application
@@ -87,9 +91,7 @@ tasks.jar {
             .joinToString(" ") { it.name }
     }
 }
-tasks.shadowJar {
-    archiveFileName.set("NUKE_release_v0.2.1.jar")
-}
+
 tasks.test {
     useJUnitPlatform()
 

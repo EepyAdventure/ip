@@ -167,7 +167,6 @@ public class Bootstrap {
                             ":waitloop\n" +
                             "move /Y \"" + jar + "\" \"" + targetJar + "\" >nul 2>&1\n" +
                             "if exist \"" + targetJar + "\" goto success\n" +
-                            "\"" + POWERSHELL + "\" -Command \"Start-Sleep -Seconds 0.1\"\n" +
                             "goto waitloop\n" +
                             ":success\n" +
                             "echo Done! Launching NUKE...\n" +
