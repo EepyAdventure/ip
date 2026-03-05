@@ -4,8 +4,11 @@ import java.nio.file.Paths;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
+import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -13,8 +16,12 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
+import process.AIEngine;
 import process.Bootstrap;
 
 /**
@@ -54,18 +61,15 @@ public class MainWindow extends AnchorPane {
     }
 
     private void setupBackground() {
-        // Bind original background to root size
         backgroundImage.fitWidthProperty().bind(root.widthProperty());
         backgroundImage.fitHeightProperty().bind(root.heightProperty());
 
-        // Create clones
         ImageView[] clones = {
-            new ImageView(backgroundImage.getImage()),
-            new ImageView(backgroundImage.getImage()),
-            new ImageView(backgroundImage.getImage())
+                new ImageView(backgroundImage.getImage()),
+                new ImageView(backgroundImage.getImage()),
+                new ImageView(backgroundImage.getImage())
         };
 
-        // Bind size + opacity
         for (ImageView bg : clones) {
             bg.fitWidthProperty().bind(root.widthProperty());
             bg.fitHeightProperty().bind(root.heightProperty());
@@ -77,7 +81,6 @@ public class MainWindow extends AnchorPane {
         ImageView bg3 = clones[1];
         ImageView bg4 = clones[2];
 
-        // Position clones in grid
         root.widthProperty().addListener((obs, oldVal, w) -> {
             bg2.setLayoutX(w.doubleValue());
             bg4.setLayoutX(w.doubleValue());
@@ -94,35 +97,30 @@ public class MainWindow extends AnchorPane {
             bg.fitHeightProperty().bind(root.heightProperty());
             bg.opacityProperty().bind(backgroundImage.opacityProperty());
             bg.effectProperty().bind(backgroundImage.effectProperty());
-            bg.setMouseTransparent(true); // add this
+            bg.setMouseTransparent(true);
         }
 
-        // Add clones behind UI
         root.getChildren().addAll(clones);
     }
 
     private void setupAnimation() {
-        // Collect all backgrounds (original + clones)
         ImageView[] allBackgrounds = {
-            backgroundImage,
-            (ImageView) root.getChildren().get(root.getChildren().size() - 3),
-            (ImageView) root.getChildren().get(root.getChildren().size() - 2),
-            (ImageView) root.getChildren().get(root.getChildren().size() - 1)
+                backgroundImage,
+                (ImageView) root.getChildren().get(root.getChildren().size() - 3),
+                (ImageView) root.getChildren().get(root.getChildren().size() - 2),
+                (ImageView) root.getChildren().get(root.getChildren().size() - 1)
         };
 
         Timeline timeline = new Timeline();
 
-        // Fire every few seconds
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.07), e -> {
             double maxX = root.getPrefWidth();
             double maxY = root.getPrefHeight();
 
-            // Pick a random "frame" along the diagonal path
-            double t = Math.random(); // 0.0 → start, 1.0 → end
+            double t = Math.random();
             double snapX = -t * maxX;
             double snapY = -t * maxY;
 
-            // Only need to set on backgroundImage — clones are bound to it
             ColorAdjust effect = new ColorAdjust();
             double r = Math.random();
             r = Math.pow(r, 0.3);
@@ -134,7 +132,6 @@ public class MainWindow extends AnchorPane {
                 bg.setTranslateY(snapY);
             }
 
-            // Flicker background color
             int green = (int) (Math.pow(Math.random(), 20) * 60 + 47);
             root.setStyle("-fx-background-color: rgb(47, " + green + ", 47);");
 
@@ -149,19 +146,25 @@ public class MainWindow extends AnchorPane {
         timeline.play();
     }
 
-    /** Injects the Duke instance */
+    /**
+     * Injects the Nuke instance and initializes engines.
+     */
     public void setNuke(Nuke n) {
         nuke = n;
-        System.out.println("=== CONFIG PATH: " + Bootstrap.getConfigPath() + " ===");
-        System.out.println("=== CONFIG EXISTS: " + Bootstrap.getConfigPath().toFile().exists() + " ===");
         nuke.start(Bootstrap.getConfigPath().toString());
         VoiceEngine.init();
-        // kill TTS when window is closed with the X button
+        AIEngine.init(Bootstrap.getConfigPath().getParent().resolve("api.txt"));
+        MusicEngine.start(Bootstrap.getConfigPath().getParent().getParent().resolve("audio"));
+
+        // kill TTS and music when window is closed with the X button
         root.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
                 newScene.windowProperty().addListener((obs2, oldWindow, newWindow) -> {
                     if (newWindow != null) {
-                        newWindow.setOnCloseRequest(e -> VoiceEngine.shutdown());
+                        newWindow.setOnCloseRequest(e -> {
+                            VoiceEngine.shutdown();
+                            MusicEngine.stop();
+                        });
                     }
                 });
             }
@@ -169,8 +172,35 @@ public class MainWindow extends AnchorPane {
     }
 
     /**
-     * Creates two dialog boxes, one echoing user input and the other containing Duke's reply and then appends them to
-     * the dialog container. Clears the user input after processing.
+     * Plays the exit animation GIF, hides the main window, then exits.
+     */
+    private void playExitAnimation() {
+        VoiceEngine.shutdown();
+        MusicEngine.stop();
+
+        Stage mainStage = (Stage) root.getScene().getWindow();
+        mainStage.hide();
+
+        Image exitGif = new Image(this.getClass().getResourceAsStream("/image/exit.gif"));
+        ImageView exitView = new ImageView(exitGif);
+        StackPane exitPane = new StackPane(exitView);
+        exitPane.setStyle("-fx-background-color: white;");
+
+        Stage exitStage = new Stage();
+        exitStage.initStyle(StageStyle.UNDECORATED);
+        exitStage.setScene(new Scene(exitPane, exitGif.getWidth(), exitGif.getHeight()));
+        exitStage.show();
+
+        // duration should match the length of your exit gif
+        PauseTransition pause = new PauseTransition(Duration.seconds(3));
+        pause.setOnFinished(ev -> Platform.exit());
+        pause.play();
+    }
+
+    /**
+     * Creates two dialog boxes, one echoing user input and the other containing
+     * Duke's reply, then appends them to the dialog container.
+     * Clears the user input after processing.
      */
     @FXML
     private void handleUserInput() {
@@ -186,10 +216,9 @@ public class MainWindow extends AnchorPane {
                     DialogBox.getDukeDialog(response, dukeImage)
             );
             userInput.clear();
-            VoiceEngine.speak(response); // speak the response
+            VoiceEngine.speak(response);
             if (!nuke.isRunning()) {
-                VoiceEngine.shutdown();
-                javafx.application.Platform.exit();
+                playExitAnimation();
             }
         }
     }

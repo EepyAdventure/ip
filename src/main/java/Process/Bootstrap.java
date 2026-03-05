@@ -109,20 +109,19 @@ public class Bootstrap {
                     ? jar.getParent()
                     : Paths.get("").toAbsolutePath();
 
-            Files.writeString(base.resolve("cleanup_debug.txt"),
-                    "cleanup path: " + base.getParent().resolve("_nuke_relocate.bat") + "\n" +
-                            "exists: " + Files.exists(base.getParent().resolve("_nuke_relocate.bat")) + "\n"
-            );
-
             // clean up any leftover relocator scripts from previous first launch
             try {
                 Files.deleteIfExists(base.resolve("_nuke_relaunch.bat"));
+                Files.deleteIfExists(base.resolve("_nuke_relaunch.sh"));
                 new File(base.getParent().resolve("_nuke_relocate.bat").toString()).delete();
+                new File(base.getParent().resolve("_nuke_relocate.sh").toString()).delete();
             } catch (IOException ignored) {}
 
             writeIfMissing(base.resolve(Paths.get("config", "config.txt")), CONFIG);
+            writeIfMissing(base.resolve(Paths.get("config", "api.txt")), ""); // paste Anthropic API key here
             writeIfMissing(base.resolve(Paths.get("data", "commands.txt")), COMMANDS);
             writeIfMissing(base.resolve(Paths.get("data", "User Data", "defaultPerm.txt")), "");
+            Files.createDirectories(base.resolve("audio")); // drop music tracks here
 
             Path commandsDir = base.resolve(Paths.get("data", "commands"));
             Files.createDirectories(commandsDir);
@@ -167,6 +166,7 @@ public class Bootstrap {
                             ":waitloop\n" +
                             "move /Y \"" + jar + "\" \"" + targetJar + "\" >nul 2>&1\n" +
                             "if exist \"" + targetJar + "\" goto success\n" +
+                            "\"" + POWERSHELL + "\" -Command \"Start-Sleep -Seconds 1\"\n" +
                             "goto waitloop\n" +
                             ":success\n" +
                             "echo Done! Launching NUKE...\n" +
@@ -178,21 +178,42 @@ public class Bootstrap {
             Files.writeString(script, batch);
             new ProcessBuilder("cmd", "/c", "start", "\"Relocating NUKE...\"", script.toString())
                     .start();
+
         } else {
+            // Mac/Linux: two-script approach mirroring Windows
+            // first script waits for jar to be released using lsof, moves it, then launches relaunch script
+            // relaunch script sets working directory and launches jar from within NUKE/
             Path script = parentDir.resolve("_nuke_relocate.sh");
+            String relaunchScript = nukeDir.resolve("_nuke_relaunch.sh").toString();
             String shell =
                     "#!/bin/bash\n" +
-                            "sleep 2\n" +
+                            "echo 'Setting up NUKE for the first time...'\n" +
+                            "echo 'This may take a moment. Please wait.'\n" +
+                            // wait until jar is no longer held open by any process
+                            "while lsof \"" + jar + "\" > /dev/null 2>&1; do\n" +
+                            "    sleep 1\n" +
+                            "done\n" +
                             "mkdir -p \"" + nukeDir + "\"\n" +
                             "mv \"" + jar + "\" \"" + targetJar + "\"\n" +
-                            "java -jar \"" + targetJar + "\" &\n" +
-                            "rm -- \"$0\"\n";
+                            "if [ -f \"" + targetJar + "\" ]; then\n" +
+                            "    echo 'Done! Launching NUKE...'\n" +
+                            // write relaunch script
+                            "    echo '#!/bin/bash' > \"" + relaunchScript + "\"\n" +
+                            "    echo 'cd \"" + nukeDir + "\"' >> \"" + relaunchScript + "\"\n" +
+                            "    echo 'java -jar \"" + targetJar + "\" &' >> \"" + relaunchScript + "\"\n" +
+                            "    echo 'rm -- \"$0\"' >> \"" + relaunchScript + "\"\n" +
+                            "    chmod +x \"" + relaunchScript + "\"\n" +
+                            "    bash \"" + relaunchScript + "\"\n" +
+                            "    rm -- \"$0\"\n" +
+                            "else\n" +
+                            "    echo 'Failed to move jar, is it still open?'\n" +
+                            "    read -p 'Press any key to continue...'\n" +
+                            "fi\n";
             Files.writeString(script, shell);
             script.toFile().setExecutable(true);
             new ProcessBuilder("/bin/bash", script.toString()).start();
         }
 
-        // give JVM time to flush before releasing file lock
         System.exit(0);
     }
 
