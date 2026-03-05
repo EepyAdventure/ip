@@ -187,21 +187,35 @@ public class MainWindow extends AnchorPane {
     @FXML
     private void handleUserInput() {
         String input = userInput.getText();
-        String response = "";
-        try {
-            response = nuke.getResponse(input);
-        } catch (Exception e) {
-            response = e.getMessage();
-        } finally {
-            dialogContainer.getChildren().addAll(
-                    DialogBox.getUserDialog(input, userImage),
-                    DialogBox.getDukeDialog(response, dukeImage)
-            );
-            userInput.clear();
-            VoiceEngine.speak(response);
-            if (!nuke.isRunning()) {
-                if (onExit != null) onExit.run();
+        userInput.clear();
+        userInput.setDisable(true);
+        sendButton.setDisable(true);
+
+        // add user dialog immediately
+        dialogContainer.getChildren().add(DialogBox.getUserDialog(input, userImage));
+
+        // process response on background thread
+        new Thread(() -> {
+            String response;
+            try {
+                response = nuke.getResponse(input);
+            } catch (Exception e) {
+                response = e.getMessage();
             }
-        }
+            final String finalResponse = response;
+            final boolean stillRunning = nuke.isRunning();
+
+            // update UI back on JavaFX thread
+            javafx.application.Platform.runLater(() -> {
+                dialogContainer.getChildren().add(DialogBox.getDukeDialog(finalResponse, dukeImage));
+                userInput.setDisable(false);
+                sendButton.setDisable(false);
+                userInput.requestFocus();
+                VoiceEngine.speak(finalResponse);
+                if (!stillRunning) {
+                    if (onExit != null) onExit.run();
+                }
+            });
+        }).start();
     }
 }
