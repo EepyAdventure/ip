@@ -30,7 +30,7 @@ jobs:
       - name: Copy binaries
         run: |
           cp $(which espeak-ng) ./espeak-mac
-          cp -r $(brew --prefix)/lib/espeak-ng-data ./espeak-ng-data-mac
+          cp -r $(brew --prefix espeak-ng)/share/espeak-ng-data ./espeak-ng-data-mac
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
