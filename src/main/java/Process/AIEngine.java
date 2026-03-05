@@ -17,7 +17,7 @@ import java.util.Collection;
  */
 public class AIEngine {
 
-    private static final int FUZZY_THRESHOLD = 2;
+    private static final int FUZZY_THRESHOLD = 1;
 
     // replace with your actual Cloudflare Worker URL after deployment
     private static final String PROXY_URL = "https://nuke-proxy.joshua-poon181818.workers.dev";

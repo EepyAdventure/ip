@@ -91,8 +91,20 @@ public class Process {
      * @return signal for program execution
      */
     public boolean process(String input) throws Exception {
-        try (Scanner command = new Scanner(input)) {
-            Method m = commandsToMethods.get(command.next());
+        try {
+            String[] tokens = input.trim().split("\\s+");
+
+            // try matching 1, 2, 3 word phrases against command keywords
+            Method m = null;
+            int matchedTokens = 0;
+            for (int len = Math.min(tokens.length, 3); len >= 1; len--) {
+                String phrase = String.join(" ", Arrays.copyOfRange(tokens, 0, len)).toLowerCase();
+                if (commandsToMethods.containsKey(phrase)) {
+                    m = commandsToMethods.get(phrase);
+                    matchedTokens = len;
+                    break;
+                }
+            }
 
             if (m == null) {
                 // unrecognised command — try fuzzy match then AI fallback
@@ -100,13 +112,8 @@ public class Process {
                 return true;
             }
 
-            String[] args;
-            if (command.hasNextLine()) {
-                String rest = command.nextLine().trim();
-                args = rest.isEmpty() ? new String[0] : rest.split("\\s+");
-            } else {
-                args = new String[0];
-            }
+            // args are everything after the matched phrase
+            String[] args = Arrays.copyOfRange(tokens, matchedTokens, tokens.length);
 
             Class<?>[] paramTypes = m.getParameterTypes();
             Object[] finalArgs = new Object[paramTypes.length];
