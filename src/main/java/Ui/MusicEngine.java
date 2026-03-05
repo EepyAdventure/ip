@@ -14,13 +14,6 @@ import java.util.List;
  */
 public class MusicEngine {
 
-    // track filenames — add more here as needed
-    private static final List<String> TRACK_NAMES = List.of(
-            "track1.mp3",
-            "track2.mp3",
-            "track3.mp3"
-    );
-
     private static MediaPlayer currentPlayer;
     private static List<String> shuffled = new ArrayList<>();
     private static int index = 0;
@@ -54,7 +47,22 @@ public class MusicEngine {
      */
     public static void start(java.nio.file.Path audioPath) {
         audioDir = audioPath;
-        shuffled = new ArrayList<>(TRACK_NAMES);
+        shuffled = new ArrayList<>();
+
+        // scan directory for all mp3 files instead of hardcoded list
+        try (var stream = java.nio.file.Files.list(audioPath)) {
+            stream.filter(p -> p.toString().toLowerCase().endsWith(".mp3"))
+                    .map(p -> p.getFileName().toString())
+                    .forEach(shuffled::add);
+        } catch (java.io.IOException e) {
+            System.err.println("MusicEngine: could not scan audio directory — " + e.getMessage());
+        }
+
+        if (shuffled.isEmpty()) {
+            System.err.println("MusicEngine: no mp3 files found in " + audioPath);
+            return;
+        }
+
         Collections.shuffle(shuffled);
         index = 0;
         playNext();

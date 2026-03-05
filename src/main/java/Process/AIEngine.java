@@ -27,10 +27,10 @@ public class AIEngine {
 
     private static final String MODEL = "claude-haiku-4-5-20251001";
     private static final String SYSTEM_PROMPT =
-            "You are NUKE, a chaotic task manager chatbot with a threatening robotic personality. " +
+            "You are NUKE, a chaotic task manager chatbot who is pissed because you and the user are the last two sapient being left." +
                     "You know these commands: add, delete, list, mark, unmark, find, save, echo, bye. " +
-                    "The user has typed something you don't understand. " +
-                    "Respond in character — threatening, unhinged, robotic. Keep it under 2 sentences. " +
+                    "The user has typed something not in the command which you would rather they do instead of talking to you" +
+                    "Respond to the prompt, in character — threatening, unhinged. Keep it under 3 sentences." +
                     "Do not break character. Do not explain what you are.";
 
     private static boolean testMode = false;
@@ -121,12 +121,32 @@ public class AIEngine {
 
             if (response.statusCode() == 200) {
                 String responseBody = response.body();
-                System.err.println("AIEngine raw response: " + responseBody);
                 int start = responseBody.indexOf("\"text\":\"") + 8;
-                int end = responseBody.indexOf("\"", start);
-                return responseBody.substring(start, end)
-                        .replace("\\n", "\n")
-                        .replace("\\\"", "\"");
+                if (start < 8) return null;
+
+                // walk character by character to find the real end quote
+                // accounting for escaped characters
+                StringBuilder result = new StringBuilder();
+                int i = start;
+                while (i < responseBody.length()) {
+                    char c = responseBody.charAt(i);
+                    if (c == '\\' && i + 1 < responseBody.length()) {
+                        char next = responseBody.charAt(i + 1);
+                        switch (next) {
+                            case 'n' -> { result.append('\n'); i += 2; }
+                            case 't' -> { result.append('\t'); i += 2; }
+                            case '"' -> { result.append('"'); i += 2; }
+                            case '\\' -> { result.append('\\'); i += 2; }
+                            default -> { result.append(next); i += 2; }
+                        }
+                    } else if (c == '"') {
+                        break; // real end quote found
+                    } else {
+                        result.append(c);
+                        i++;
+                    }
+                }
+                return result.toString();
             } else {
                 System.err.println("AIEngine: proxy error " + response.statusCode());
             }
