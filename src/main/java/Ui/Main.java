@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -32,7 +33,7 @@ public class Main extends Application {
      * @param stage the primary stage
      */
     private void playSplashScreen(Stage stage) {
-        Image splashGif = new Image(Main.class.getResourceAsStream("/image/splash.gif"));
+        Image splashGif = new Image(Main.class.getResourceAsStream("/image/Start_Screen.gif"));
         ImageView splashView = new ImageView(splashGif);
         StackPane splashPane = new StackPane(splashView);
         splashPane.setStyle("-fx-background-color: white;");
@@ -51,21 +52,38 @@ public class Main extends Application {
         pause.play();
     }
 
-    /**
-     * Loads and displays the main application window.
-     *
-     * @param stage the primary stage
-     */
     private void showMainWindow(Stage stage) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
             AnchorPane ap = fxmlLoader.load();
             Scene scene = new Scene(ap);
             stage.setScene(scene);
-            fxmlLoader.<MainWindow>getController().setNuke(nuke);
+            MainWindow controller = fxmlLoader.getController();
+            controller.setNuke(nuke);
+            controller.setOnExit(() -> playExitAnimation(stage)); // pass callback
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void playExitAnimation(Stage stage) {
+        MusicEngine.stop();
+        VoiceEngine.shutdown();
+        stage.hide();
+
+        Image exitGif = new Image(Main.class.getResourceAsStream("/image/End_Screen.gif"));
+        ImageView exitView = new ImageView(exitGif);
+        StackPane exitPane = new StackPane(exitView);
+        exitPane.setStyle("-fx-background-color: white;");
+
+        Stage exitStage = new Stage();
+        exitStage.initStyle(StageStyle.UNDECORATED);
+        exitStage.setScene(new Scene(exitPane, exitGif.getWidth(), exitGif.getHeight()));
+        exitStage.show();
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(3));
+        pause.setOnFinished(ev -> Platform.exit());
+        pause.play();
     }
 }

@@ -22,5 +22,11 @@ text-ui-test/EXPECTED-UNIX.TXT
 # Ignore Gradle build output directory
 build
 
+# NUKE runtime folder
+NUKE/
+
 # Ignore Kotlin plugin data
 .kotlin
+
+# Logs
+*.log

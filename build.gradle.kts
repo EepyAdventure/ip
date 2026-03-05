@@ -16,7 +16,13 @@ plugins {
     id("checkstyle")
     id("io.github.goooler.shadow") version "8.1.8"
 }
-
+sourceSets {
+    main {
+        resources {
+            srcDirs("src/main/resources", "audio") // add root audio folder
+        }
+    }
+}
 checkstyle {
     toolVersion = "11.0.0"
 }
@@ -49,6 +55,10 @@ dependencies {
     implementation("org.openjfx:javafx-graphics:$javaFxVersion:win")
     implementation("org.openjfx:javafx-graphics:$javaFxVersion:mac")
     implementation("org.openjfx:javafx-graphics:$javaFxVersion:linux")
+	
+    implementation("org.openjfx:javafx-media:$javaFxVersion:win")
+    implementation("org.openjfx:javafx-media:$javaFxVersion:mac")
+    implementation("org.openjfx:javafx-media:$javaFxVersion:linux")
 
     implementation("com.github.stefanbirkner:system-lambda:1.2.1")
     
@@ -111,4 +121,7 @@ tasks.register<Zip>("releaseZip") {
     from(tasks.jar) // include the jar
     from("config") { into("config") } // include config folder
     from("data") { into("data") } // include save folder if needed
+}
+tasks.processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

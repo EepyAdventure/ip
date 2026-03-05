@@ -25,6 +25,26 @@ public class MusicEngine {
     private static List<String> shuffled = new ArrayList<>();
     private static int index = 0;
     private static java.nio.file.Path audioDir;
+    private static double normalVolume = 0.8;
+
+    public static void setVolume(double volume) {
+        normalVolume = volume;
+        if (currentPlayer != null) {
+            currentPlayer.setVolume(volume);
+        }
+    }
+
+    public static void duck() {
+        if (currentPlayer != null) {
+            currentPlayer.setVolume(normalVolume * 0.2);
+        }
+    }
+
+    public static void unduck() {
+        if (currentPlayer != null) {
+            currentPlayer.setVolume(normalVolume);
+        }
+    }
 
     /**
      * Initializes the music engine and starts playback.

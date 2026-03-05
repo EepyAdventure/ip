@@ -36,9 +36,14 @@ public class VoiceEngine {
         if (clean.isBlank()) {
             return;
         }
-        // kill any currently playing speech before starting new one
+        MusicEngine.duck();
         shutdown();
-        new Thread(() -> synthesize(clean)).start();
+        MusicEngine.duck();
+        new Thread(() -> {
+            synthesize(clean);
+            // unduck runs in the same thread after synthesize finishes
+            MusicEngine.unduck();
+        }).start();
     }
 
     /**
@@ -75,7 +80,7 @@ public class VoiceEngine {
                 "Add-Type -AssemblyName System.Speech; "
                         + "$s = New-Object System.Speech.Synthesis.SpeechSynthesizer; "
                         + "$s.Rate = -6; "
-                        + "$s.Volume = 100; "
+                        + "$s.Volume = 200; "
                         + "$s.SelectVoiceByHints([System.Speech.Synthesis.VoiceGender]::Female); "
                         + "$s.Speak('" + text + "');"
             };

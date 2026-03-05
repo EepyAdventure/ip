@@ -23,7 +23,7 @@ public class AIEngine {
     private static final String PROXY_URL = "https://nuke-proxy.YOUR_SUBDOMAIN.workers.dev";
 
     // replace with whatever token you set via: wrangler secret put NUKE_TOKEN
-    private static final String NUKE_TOKEN = "replace_with_your_token";
+    private static final String NUKE_TOKEN = "secret_box_dum_dum_da_da_da_da_dum_dum_da_da";
 
     private static final String MODEL = "claude-haiku-4-5-20251001";
     private static final String SYSTEM_PROMPT =

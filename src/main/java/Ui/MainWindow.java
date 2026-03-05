@@ -56,6 +56,12 @@ public class MainWindow extends AnchorPane {
         setupAnimation();
     }
 
+    private Runnable onExit;
+
+    public void setOnExit(Runnable onExit) {
+        this.onExit = onExit;
+    }
+
     private void bindScroll() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
     }
@@ -171,31 +177,7 @@ public class MainWindow extends AnchorPane {
         });
     }
 
-    /**
-     * Plays the exit animation GIF, hides the main window, then exits.
-     */
-    private void playExitAnimation() {
-        VoiceEngine.shutdown();
-        MusicEngine.stop();
 
-        Stage mainStage = (Stage) root.getScene().getWindow();
-        mainStage.hide();
-
-        Image exitGif = new Image(this.getClass().getResourceAsStream("/image/exit.gif"));
-        ImageView exitView = new ImageView(exitGif);
-        StackPane exitPane = new StackPane(exitView);
-        exitPane.setStyle("-fx-background-color: white;");
-
-        Stage exitStage = new Stage();
-        exitStage.initStyle(StageStyle.UNDECORATED);
-        exitStage.setScene(new Scene(exitPane, exitGif.getWidth(), exitGif.getHeight()));
-        exitStage.show();
-
-        // duration should match the length of your exit gif
-        PauseTransition pause = new PauseTransition(Duration.seconds(3));
-        pause.setOnFinished(ev -> Platform.exit());
-        pause.play();
-    }
 
     /**
      * Creates two dialog boxes, one echoing user input and the other containing
@@ -218,7 +200,7 @@ public class MainWindow extends AnchorPane {
             userInput.clear();
             VoiceEngine.speak(response);
             if (!nuke.isRunning()) {
-                playExitAnimation();
+                if (onExit != null) onExit.run();
             }
         }
     }

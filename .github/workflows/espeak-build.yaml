@@ -1,0 +1,29 @@
+name: Build eSpeak Binaries
+on: workflow_dispatch  # run manually when needed
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt install espeak-ng
+      - run: cp /usr/bin/espeak-ng ./espeak-linux
+      - run: cp -r /usr/lib/x86_64-linux-gnu/espeak-ng-data ./espeak-ng-data-linux
+      - uses: actions/upload-artifact@v3
+        with:
+          name: espeak-linux
+          path: |
+            espeak-linux
+            espeak-ng-data-linux/
+
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - run: brew install espeak-ng
+      - run: cp /opt/homebrew/bin/espeak-ng ./espeak-mac
+      - run: cp -r /opt/homebrew/lib/espeak-ng-data ./espeak-ng-data-mac
+      - uses: actions/upload-artifact@v3
+        with:
+          name: espeak-mac
+          path: |
+            espeak-mac
+            espeak-ng-data-mac/

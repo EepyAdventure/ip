@@ -2,10 +2,13 @@ package process;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -26,7 +29,11 @@ import java.util.Map;
  * NUKE/
  * ├── NUCLEAR.jar
  * ├── config/
- * │   └── config.txt
+ * │   ├── config.txt
+ * │   └── api.txt          ← paste Anthropic API key here (optional)
+ * ├── audio/               ← extracted from jar on first launch
+ * │   ├── track1.mp3
+ * │   └── ...
  * └── data/
  *     ├── commands.txt
  *     ├── commands/
@@ -89,7 +96,7 @@ public class Bootstrap {
 
     /**
      * Ensures the jar is inside a NUKE/ folder, relocating if necessary,
-     * then creates all missing config and data files.
+     * then creates all missing config and data files and extracts audio.
      */
     public static void ensureFilesExist() {
         try {
@@ -118,10 +125,14 @@ public class Bootstrap {
             } catch (IOException ignored) {}
 
             writeIfMissing(base.resolve(Paths.get("config", "config.txt")), CONFIG);
-            writeIfMissing(base.resolve(Paths.get("config", "api.txt")), ""); // paste Anthropic API key here
+            writeIfMissing(base.resolve(Paths.get("config", "api.txt")), "");
             writeIfMissing(base.resolve(Paths.get("data", "commands.txt")), COMMANDS);
             writeIfMissing(base.resolve(Paths.get("data", "User Data", "defaultPerm.txt")), "");
-            Files.createDirectories(base.resolve("audio")); // drop music tracks here
+
+            // extract audio files from jar to NUKE/audio/ if not already there
+            Path audioDir = base.resolve("audio");
+            Files.createDirectories(audioDir);
+            extractAudio(audioDir);
 
             Path commandsDir = base.resolve(Paths.get("data", "commands"));
             Files.createDirectories(commandsDir);
@@ -131,6 +142,54 @@ public class Bootstrap {
 
         } catch (IOException | URISyntaxException e) {
             throw new NukeException("Bootstrap failed: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Extracts audio files bundled in the jar to the target audio directory.
+     * Skips files that already exist on disk.
+     *
+     * @param audioDir path to extract audio files into
+     */
+    private static void extractAudio(Path audioDir) {
+        try {
+            java.net.URL audioResource = Bootstrap.class.getResource("/audio");
+            if (audioResource == null) {
+                return; // no audio bundled in jar
+            }
+
+            URI uri = audioResource.toURI();
+            java.nio.file.FileSystem fs = null;
+
+            // if running from a jar, open the jar as a filesystem
+            if (uri.getScheme().equals("jar")) {
+                fs = FileSystems.newFileSystem(uri, Collections.emptyMap());
+            }
+
+            Path resourceAudioDir = Paths.get(uri);
+
+            try (var stream = Files.walk(resourceAudioDir, 1)) {
+                stream.filter(p -> !p.equals(resourceAudioDir))
+                        .forEach(p -> {
+                            Path target = audioDir.resolve(p.getFileName().toString());
+                            try {
+                                if (!Files.exists(target)) {
+                                    Files.copy(p, target);
+                                    System.out.println("Bootstrap: extracted " + p.getFileName());
+                                }
+                            } catch (IOException e) {
+                                System.err.println("Bootstrap: failed to extract "
+                                        + p.getFileName() + " — " + e.getMessage());
+                            }
+                        });
+            }
+
+            if (fs != null) {
+                fs.close();
+            }
+
+        } catch (Exception e) {
+            System.err.println("Bootstrap: audio extraction failed — " + e.getMessage());
         }
     }
 
@@ -148,6 +207,7 @@ public class Bootstrap {
         // pre-create config files into NUKE/ before we exit
         // so the relaunched jar finds them immediately
         writeIfMissing(nukeDir.resolve(Paths.get("config", "config.txt")), CONFIG);
+        writeIfMissing(nukeDir.resolve(Paths.get("config", "api.txt")), "");
         writeIfMissing(nukeDir.resolve(Paths.get("data", "commands.txt")), COMMANDS);
         writeIfMissing(nukeDir.resolve(Paths.get("data", "User Data", "defaultPerm.txt")), "");
         Path commandsDir = nukeDir.resolve(Paths.get("data", "commands"));
@@ -180,16 +240,13 @@ public class Bootstrap {
                     .start();
 
         } else {
-            // Mac/Linux: two-script approach mirroring Windows
-            // first script waits for jar to be released using lsof, moves it, then launches relaunch script
-            // relaunch script sets working directory and launches jar from within NUKE/
+            // Mac/Linux: two-script approach
             Path script = parentDir.resolve("_nuke_relocate.sh");
             String relaunchScript = nukeDir.resolve("_nuke_relaunch.sh").toString();
             String shell =
                     "#!/bin/bash\n" +
                             "echo 'Setting up NUKE for the first time...'\n" +
                             "echo 'This may take a moment. Please wait.'\n" +
-                            // wait until jar is no longer held open by any process
                             "while lsof \"" + jar + "\" > /dev/null 2>&1; do\n" +
                             "    sleep 1\n" +
                             "done\n" +
@@ -197,7 +254,6 @@ public class Bootstrap {
                             "mv \"" + jar + "\" \"" + targetJar + "\"\n" +
                             "if [ -f \"" + targetJar + "\" ]; then\n" +
                             "    echo 'Done! Launching NUKE...'\n" +
-                            // write relaunch script
                             "    echo '#!/bin/bash' > \"" + relaunchScript + "\"\n" +
                             "    echo 'cd \"" + nukeDir + "\"' >> \"" + relaunchScript + "\"\n" +
                             "    echo 'java -jar \"" + targetJar + "\" &' >> \"" + relaunchScript + "\"\n" +
