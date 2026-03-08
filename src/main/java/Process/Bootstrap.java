@@ -34,6 +34,9 @@ import java.util.Map;
  * ├── audio/               ← extracted from jar on first launch
  * │   ├── track1.mp3
  * │   └── ...
+ * ├── espeak/              ← extracted from jar on first launch
+ * │   ├── espeak-ng(.exe)
+ * │   └── espeak-ng-data/
  * └── data/
  *     ├── commands.txt
  *     ├── commands/
@@ -96,7 +99,7 @@ public class Bootstrap {
 
     /**
      * Ensures the jar is inside a NUKE/ folder, relocating if necessary,
-     * then creates all missing config and data files and extracts audio.
+     * then creates all missing config and data files, and extracts audio and espeak.
      */
     public static void ensureFilesExist() {
         try {
@@ -132,7 +135,13 @@ public class Bootstrap {
             // extract audio files from jar to NUKE/audio/ if not already there
             Path audioDir = base.resolve("audio");
             Files.createDirectories(audioDir);
-            extractAudio(audioDir);
+            extractFromJar("/audio", audioDir, false);
+
+            // extract espeak binaries from jar to NUKE/espeak/ if not already there
+            Path espeakDir = base.resolve("espeak");
+            Files.createDirectories(espeakDir);
+            String platform = OS.contains("win") ? "win" : OS.contains("mac") ? "mac" : "linux";
+            extractFromJar("/espeak/" + platform, espeakDir, !OS.contains("win"));
 
             Path commandsDir = base.resolve(Paths.get("data", "commands"));
             Files.createDirectories(commandsDir);
@@ -146,42 +155,51 @@ public class Bootstrap {
     }
 
     /**
-     * Extracts audio files bundled in the jar to the target audio directory.
+     * Extracts files and directories from a jar resource path to a target directory.
      * Skips files that already exist on disk.
+     * Optionally marks extracted files as executable (for binaries on Mac/Linux).
      *
-     * @param audioDir path to extract audio files into
+     * @param resourcePath  path inside the jar to extract from (e.g. "/audio", "/espeak/win")
+     * @param targetDir     directory on disk to extract into
+     * @param setExecutable whether to mark extracted files as executable
      */
-    private static void extractAudio(Path audioDir) {
+    private static void extractFromJar(String resourcePath, Path targetDir, boolean setExecutable) {
         try {
-            java.net.URL audioResource = Bootstrap.class.getResource("/audio");
-            if (audioResource == null) {
-                return; // no audio bundled in jar
+            java.net.URL resource = Bootstrap.class.getResource(resourcePath);
+            if (resource == null) {
+                System.err.println("Bootstrap: no resource found at " + resourcePath);
+                return;
             }
 
-            URI uri = audioResource.toURI();
+            URI uri = resource.toURI();
             java.nio.file.FileSystem fs = null;
 
-            // if running from a jar, open the jar as a filesystem
             if (uri.getScheme().equals("jar")) {
                 fs = FileSystems.newFileSystem(uri, Collections.emptyMap());
             }
 
-            Path resourceAudioDir = Paths.get(uri);
+            Path resourceDir = Paths.get(uri);
 
-            try (var stream = Files.walk(resourceAudioDir, 1)) {
-                stream.filter(p -> !p.equals(resourceAudioDir))
-                        .forEach(p -> {
-                            Path target = audioDir.resolve(p.getFileName().toString());
-                            try {
-                                if (!Files.exists(target)) {
-                                    Files.copy(p, target);
-                                    System.out.println("Bootstrap: extracted " + p.getFileName());
-                                }
-                            } catch (IOException e) {
-                                System.err.println("Bootstrap: failed to extract "
-                                        + p.getFileName() + " — " + e.getMessage());
+            try (var stream = Files.walk(resourceDir)) {
+                stream.forEach(p -> {
+                    Path relative = resourceDir.relativize(p);
+                    Path target = targetDir.resolve(relative.toString());
+                    try {
+                        if (Files.isDirectory(p)) {
+                            Files.createDirectories(target);
+                        } else if (!Files.exists(target)) {
+                            Files.createDirectories(target.getParent());
+                            Files.copy(p, target);
+                            if (setExecutable) {
+                                target.toFile().setExecutable(true);
                             }
-                        });
+                            System.out.println("Bootstrap: extracted " + relative);
+                        }
+                    } catch (IOException e) {
+                        System.err.println("Bootstrap: failed to extract "
+                                + relative + " — " + e.getMessage());
+                    }
+                });
             }
 
             if (fs != null) {
@@ -189,7 +207,8 @@ public class Bootstrap {
             }
 
         } catch (Exception e) {
-            System.err.println("Bootstrap: audio extraction failed — " + e.getMessage());
+            System.err.println("Bootstrap: extraction failed for " + resourcePath
+                    + " — " + e.getMessage());
         }
     }
 

@@ -4,32 +4,93 @@ package ui;
  * Handles text-to-speech using eSpeak NG on all platforms.
  * Falls back to OS native TTS if eSpeak NG is not installed.
  *
- * Windows: espeak-ng via winget, fallback to PowerShell System.Speech
- * Mac:     espeak-ng via brew, fallback to say command with Zarvox
- * Linux:   espeak-ng via apt, fallback to espeak
+ * Windows: bundled espeak-ng.exe extracted to NUKE/espeak/
+ * Mac:     bundled espeak-ng extracted to NUKE/espeak/
+ * Linux:   bundled espeak-ng extracted to NUKE/espeak/
+ * Fallback: OS native TTS if espeak not found
  */
 public class VoiceEngine {
     private static final String OS = System.getProperty("os.name").toLowerCase();
     private static final String POWERSHELL =
             "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe";
 
-    // eSpeak NG binary paths per platform
-    private static final String ESPEAK_WIN =
-            "C:\\Program Files\\eSpeak NG\\espeak-ng.exe";
-    private static final String ESPEAK_UNIX = "espeak-ng";
-
     private static Process currentProcess;
+    private static Thread currentThread;
     private static boolean espeakAvailable = false;
 
-    /** Detects whether eSpeak NG is installed. */
+    // incremented on each speak() call — lets the thread know if it's been superseded
+    private static volatile int speakGeneration = 0;
+
+    /** Detects whether extracted eSpeak NG binary is available. */
     public static void init() {
         espeakAvailable = detectEspeak();
+        System.out.println("VoiceEngine: espeak available = " + espeakAvailable);
+        System.out.println("VoiceEngine: espeak path = " + getEspeakBinary());
+
+        // kill TTS on JVM exit regardless of how the app is closed
+        Runtime.getRuntime().addShutdownHook(new Thread(VoiceEngine::shutdown));
     }
 
-    /** Kills any currently playing speech and releases resources. */
+    /** Kills any currently playing speech and the thread waiting on it. */
     public static void shutdown() {
         if (currentProcess != null && currentProcess.isAlive()) {
             currentProcess.destroyForcibly();
+            currentProcess = null;
+        }
+        if (currentThread != null && currentThread.isAlive()) {
+            currentThread.interrupt();
+            currentThread = null;
+        }
+    }
+
+    /**
+     * Detects whether the extracted eSpeak NG binary exists and runs correctly.
+     *
+     * @return true if espeak-ng is available
+     */
+    private static boolean detectEspeak() {
+        try {
+            String binary = getEspeakBinary();
+            java.io.File binaryFile = new java.io.File(binary);
+            System.out.println("VoiceEngine: binary exists = " + binaryFile.exists());
+            if (!binaryFile.exists()) {
+                return false;
+            }
+            Process p = new ProcessBuilder(binary, "--version")
+                    .redirectErrorStream(true)
+                    .start();
+            // print whatever espeak outputs
+            String output = new String(p.getInputStream().readAllBytes());
+            System.out.println("VoiceEngine: espeak output = " + output);
+            p.waitFor();
+            System.out.println("VoiceEngine: espeak exit code = " + p.exitValue());
+            return p.exitValue() == 0;
+        } catch (Exception e) {
+            System.err.println("VoiceEngine: espeak detection failed — " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Returns the path to the eSpeak NG binary extracted to NUKE/espeak/.
+     * Resolved at runtime so user.dir is correct after relocation.
+     */
+    private static String getEspeakBinary() {
+        if (OS.contains("win")) {
+            return System.getProperty("user.dir") + "\\espeak\\espeak-ng.exe";
+        } else {
+            return System.getProperty("user.dir") + "/espeak/espeak-ng";
+        }
+    }
+
+    /**
+     * Returns the path to the eSpeak NG data directory.
+     */
+    private static String getEspeakDataPath() {
+        if (OS.contains("win")) {
+            return System.getProperty("user.dir") + "\\espeak\\espeak-ng-data";
+        } else {
+            return System.getProperty("user.dir") + "/espeak/espeak-ng-data";
         }
     }
 
@@ -41,29 +102,26 @@ public class VoiceEngine {
      * @param text text to speak
      */
     public static void speak(String text) {
-        if (text == null || text.isBlank()) {
-            return;
-        }
+        if (text == null || text.isBlank()) return;
         String clean = text.replaceAll("[^a-zA-Z0-9 .,!?]", " ").trim();
-        if (clean.isBlank()) {
-            return;
-        }
+        if (clean.isBlank()) return;
+
+        speakGeneration++;
+        final int myGeneration = speakGeneration;
         shutdown();
         MusicEngine.duck();
-        new Thread(() -> synthesize(clean)).start();
-        // unduck after speech process finishes
-        // poll briefly since currentProcess may not be assigned yet
-        new Thread(() -> {
+
+        currentThread = new Thread(() -> {
             try {
-                Thread.sleep(100);
-                if (currentProcess != null) {
-                    currentProcess.waitFor();
-                }
-            } catch (InterruptedException ignored) {
+                synthesize(clean);
             } finally {
-                MusicEngine.unduck();
+                if (speakGeneration == myGeneration) {
+                    MusicEngine.unduck();
+                }
             }
-        }).start();
+        });
+        currentThread.setDaemon(true);
+        currentThread.start();
     }
 
     /**
@@ -82,34 +140,38 @@ public class VoiceEngine {
                     .redirectErrorStream(true)
                     .start();
             currentProcess.waitFor();
+        } catch (InterruptedException ignored) {
+            // interrupted by shutdown() — kill process if still alive
+            if (currentProcess != null && currentProcess.isAlive()) {
+                currentProcess.destroyForcibly();
+            }
         } catch (Exception e) {
             System.err.println("VoiceEngine: TTS failed — " + e.getMessage());
         }
     }
 
     /**
-     * Builds the eSpeak NG command.
-     * Uses a low pitch and slow rate for a retro robotic sound.
+     * Builds the eSpeak NG command using the extracted binary.
      *
      * @param text text to speak
      * @return command array
      */
     private static String[] buildEspeakCommand(String text) {
-        String binary = OS.contains("win") ? ESPEAK_WIN : ESPEAK_UNIX;
         return new String[]{
-                binary,
-                "-v", "en",    // English voice
-                "-s", "120",   // slow rate (default 175)
-                "-p", "20",    // low pitch (default 50)
-                "-a", "200",   // amplitude/volume (0-200)
-                "--punct",     // speak punctuation for robotic effect
+                getEspeakBinary(),
+                "--path", getEspeakDataPath(),
+                "-v", "en",
+                "-s", "120",
+                "-p", "20",
+                "-a", "200",
+                "--punct",
                 text
         };
     }
 
     /**
      * Builds the OS native TTS fallback command.
-     * Used when eSpeak NG is not installed.
+     * Used when eSpeak NG binary is not found.
      *
      * @param text text to speak
      * @return command array, or null if OS is unsupported
@@ -131,23 +193,5 @@ public class VoiceEngine {
             return new String[]{"espeak", "-v", "en", "-s", "120", "-p", "20", text};
         }
         return null;
-    }
-
-    /**
-     * Detects whether eSpeak NG is installed on this machine.
-     *
-     * @return true if espeak-ng is available
-     */
-    private static boolean detectEspeak() {
-        try {
-            String binary = OS.contains("win") ? ESPEAK_WIN : ESPEAK_UNIX;
-            Process p = new ProcessBuilder(binary, "--version")
-                    .redirectErrorStream(true)
-                    .start();
-            p.waitFor();
-            return p.exitValue() == 0;
-        } catch (Exception e) {
-            return false;
-        }
     }
 }
