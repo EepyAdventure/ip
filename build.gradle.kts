@@ -12,7 +12,6 @@ java {
 }
 plugins {
     id("java")
-    application
     id("checkstyle")
     id("io.github.goooler.shadow") version "8.1.8"
 }
@@ -68,14 +67,6 @@ dependencies {
     testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
 
 }
-
-application {
-    mainClass.set("ui.Launcher") // fully qualified class name
-    applicationDefaultJvmArgs = listOf(
-        "-Dfile.encoding=UTF-8",
-        "-Djavax.sound.sampled.SourceDataLine=#REALTEK HD AUDIO 2ND OUTPUT"
-    )
-}
 tasks.jar {
     archiveFileName.set("NUCLEAR.jar")
     destinationDirectory.set(project.rootDir)
@@ -122,11 +113,14 @@ tasks.register<Zip>("releaseZip") {
     from("config") { into("config") } // include config folder
     from("data") { into("data") } // include save folder if needed
 }
+tasks.register<JavaExec>("run") {
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("ui.Launcher")
+    jvmArgs = listOf(
+        "-Dfile.encoding=UTF-8",
+        "-Djavax.sound.sampled.SourceDataLine=#REALTEK HD AUDIO 2ND OUTPUT"
+    )
+}
 tasks.processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
-jvmArgs = listOf(
-    "-Dfile.encoding=UTF-8",
-    "--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED",
-    "-Djava.util.logging.level=OFF"
-)
