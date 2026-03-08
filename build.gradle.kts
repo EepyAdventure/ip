@@ -125,3 +125,8 @@ tasks.register<Zip>("releaseZip") {
 tasks.processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
+jvmArgs = listOf(
+    "-Dfile.encoding=UTF-8",
+    "--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED",
+    "-Djava.util.logging.level=OFF"
+)
