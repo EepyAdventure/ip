@@ -4,14 +4,12 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Path;
 import java.util.Collection;
 
 /**
  * Handles unrecognised input by:
  *   1. Fuzzy matching against known commands using Levenshtein distance
  *   2. Falling back to the Anthropic Claude API via a Cloudflare Worker proxy
- *
  * The proxy URL and token are baked in — no API key needed on the user's machine.
  * In test mode, the AI fallback is always skipped to prevent API calls.
  */
@@ -34,26 +32,6 @@ public class AiEngine {
                     + "which you would rather they do instead of talking to you"
                     + "Respond to the prompt, in character — threatening, unhinged. Keep it under 3 sentences."
                     + "Do not break character. Do not explain what you are.";
-
-    private static boolean testMode = false;
-
-    /**
-     * Enables test mode — disables the AI fallback entirely so tests never hit the API.
-     * Call this in @BeforeAll in your test classes.
-     *
-     * @param enabled true to enable test mode
-     */
-    public static void setTestMode(boolean enabled) {
-        testMode = enabled;
-    }
-
-    /**
-     * No-op — no API key needed with proxy approach.
-     * Kept for compatibility with existing setNuke() call in MainWindow.
-     *
-     * @param apiKeyPath unused
-     */
-    public static void init(Path apiKeyPath) {}
 
     /**
      * Handles unrecognised input.
@@ -83,12 +61,9 @@ public class AiEngine {
                     + "Because what you typed was NOT that. Try again.";
         }
 
-        // no close match — fall back to Claude via proxy unless in test mode
-        if (!testMode) {
-            String aiResponse = callProxy(input);
-            if (aiResponse != null) {
-                return aiResponse;
-            }
+        String aiResponse = callProxy(input);
+        if (aiResponse != null) {
+            return aiResponse;
         }
 
         // default fallback if proxy is unavailable or in test mode

@@ -88,7 +88,7 @@ public abstract class Action {
         assert task != null : "Task does not exist";
         taskList.remove(idx - 1);
         System.out.printf("I dragged them out the back%n");
-        System.out.printf("  %s%n", task.toString());
+        System.out.printf("  %s%n", task);
         System.out.printf("Now you have %d tasks in the list%n", taskList.size());
         return true;
     }

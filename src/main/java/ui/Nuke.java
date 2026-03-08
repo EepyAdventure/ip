@@ -29,9 +29,7 @@ public class Nuke {
      */
     public String getResponse(String input) throws Exception {
         boolean[] result = {true};
-        String output = tapSystemOut(() -> {
-            result[0] = process.process(input);
-        });
+        String output = tapSystemOut(() -> result[0] = process.process(input));
         running = result[0];
         return output.trim();
     }

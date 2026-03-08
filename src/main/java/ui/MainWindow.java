@@ -13,7 +13,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import process.AiEngine;
 import process.Bootstrap;
 
 /**
@@ -151,7 +150,6 @@ public class MainWindow extends AnchorPane {
         nuke = n;
         nuke.start(Bootstrap.getConfigPath().toString());
         VoiceEngine.init();
-        AiEngine.init(Bootstrap.getConfigPath().getParent().resolve("api.txt"));
         MusicEngine.start(Bootstrap.getConfigPath().getParent().getParent().resolve("audio"));
 
         // kill TTS and music when window is closed with the X button

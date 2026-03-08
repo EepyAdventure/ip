@@ -54,19 +54,23 @@ public class Bootstrap {
             "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe";
 
     private static final String CONFIG =
-            ".\\data\\commands.txt\n"
-                    + ".\\data\\User Data\\defaultPerm.txt\n";
+            """
+                    .\\data\\commands.txt
+                    .\\data\\User Data\\defaultPerm.txt
+                    """;
 
     private static final String COMMANDS =
-            "process.Action exit .\\data\\commands\\bye.txt\n"
-                    + "process.Action echo [Ljava.lang.String; .\\data\\commands\\echo.txt\n"
-                    + "process.Action add java.lang.String [Ljava.lang.String; .\\data\\commands\\add.txt\n"
-                    + "process.Action delete java.lang.String .\\data\\commands\\delete.txt\n"
-                    + "process.Action list .\\data\\commands\\list.txt\n"
-                    + "process.Action mark java.lang.String .\\data\\commands\\mark.txt\n"
-                    + "process.Action unmark java.lang.String .\\data\\commands\\unmark.txt\n"
-                    + "process.Action save .\\data\\commands\\save.txt\n"
-                    + "process.Action find java.lang.String .\\data\\commands\\find.txt\n";
+            """
+                    process.Action exit .\\data\\commands\\bye.txt
+                    process.Action echo [Ljava.lang.String; .\\data\\commands\\echo.txt
+                    process.Action add java.lang.String [Ljava.lang.String; .\\data\\commands\\add.txt
+                    process.Action delete java.lang.String .\\data\\commands\\delete.txt
+                    process.Action list .\\data\\commands\\list.txt
+                    process.Action mark java.lang.String .\\data\\commands\\mark.txt
+                    process.Action unmark java.lang.String .\\data\\commands\\unmark.txt
+                    process.Action save .\\data\\commands\\save.txt
+                    process.Action find java.lang.String .\\data\\commands\\find.txt
+                    """;
 
     private static final Map<String, String> COMMAND_FILES = Map.of(
             "bye.txt", "bye\nfarewell\nsee you later\n",
@@ -88,10 +92,11 @@ public class Bootstrap {
     public static Path getConfigPath() {
         try {
             Path jar = getJarPath();
+            Path config = Paths.get("config", "config.txt");
             if (jar.toString().endsWith(".jar")) {
-                return jar.getParent().resolve(Paths.get("config", "config.txt"));
+                return jar.getParent().resolve(config);
             }
-            return Paths.get("").toAbsolutePath().resolve(Paths.get("config", "config.txt"));
+            return Paths.get("").toAbsolutePath().resolve(config);
         } catch (URISyntaxException e) {
             throw new NukeException("Bootstrap could not resolve config path: " + e.getMessage());
         }

@@ -18,8 +18,8 @@ import java.util.Scanner;
  * Processes all inputs, including system start.
  */
 public class Process {
-    private Path commands;
-    private Path saves;
+    private final Path commands;
+    private final Path saves;
     private final Map<String, Method> commandsToMethods = new HashMap<>();
 
     /**
