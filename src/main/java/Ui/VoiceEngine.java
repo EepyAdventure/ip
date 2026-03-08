@@ -102,9 +102,13 @@ public class VoiceEngine {
      * @param text text to speak
      */
     public static void speak(String text) {
-        if (text == null || text.isBlank()) return;
+        if (text == null || text.isBlank()) {
+            return;
+        }
         String clean = text.replaceAll("[^a-zA-Z0-9 .,!?]", " ").trim();
-        if (clean.isBlank()) return;
+        if (clean.isBlank()) {
+            return;
+        }
 
         speakGeneration++;
         final int myGeneration = speakGeneration;
@@ -158,14 +162,14 @@ public class VoiceEngine {
      */
     private static String[] buildEspeakCommand(String text) {
         return new String[]{
-                getEspeakBinary(),
-                "--path", getEspeakDataPath(),
-                "-v", "en",
-                "-s", "120",
-                "-p", "20",
-                "-a", "200",
-                "--punct",
-                text
+            getEspeakBinary(),
+            "--path", getEspeakDataPath(),
+            "-v", "en",
+            "-s", "120",
+            "-p", "20",
+            "-a", "200",
+            "--punct",
+            text
         };
     }
 
@@ -179,13 +183,13 @@ public class VoiceEngine {
     private static String[] buildFallbackCommand(String text) {
         if (OS.contains("win")) {
             return new String[]{
-                    POWERSHELL, "-Command",
-                    "Add-Type -AssemblyName System.Speech; "
-                            + "$s = New-Object System.Speech.Synthesis.SpeechSynthesizer; "
-                            + "$s.Rate = -6; "
-                            + "$s.Volume = 100; "
-                            + "$s.SelectVoiceByHints([System.Speech.Synthesis.VoiceGender]::Female); "
-                            + "$s.Speak('" + text + "');"
+                POWERSHELL, "-Command",
+                "Add-Type -AssemblyName System.Speech; "
+                        + "$s = New-Object System.Speech.Synthesis.SpeechSynthesizer; "
+                        + "$s.Rate = -6; "
+                        + "$s.Volume = 100; "
+                        + "$s.SelectVoiceByHints([System.Speech.Synthesis.VoiceGender]::Female); "
+                        + "$s.Speak('" + text + "');"
             };
         } else if (OS.contains("mac")) {
             return new String[]{"say", "-v", "Zarvox", "-r", "120", text};

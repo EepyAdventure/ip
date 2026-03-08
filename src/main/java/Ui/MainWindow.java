@@ -1,14 +1,9 @@
 package ui;
 
-import java.nio.file.Paths;
-
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -16,12 +11,9 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.Duration;
-import process.AIEngine;
+import process.AiEngine;
 import process.Bootstrap;
 
 /**
@@ -46,6 +38,8 @@ public class MainWindow extends AnchorPane {
     private Image userImage = new Image(this.getClass().getResourceAsStream("/image/DaUser.jpg"));
     private Image dukeImage = new Image(this.getClass().getResourceAsStream("/image/DaNuke.png"));
 
+    private Runnable onExit;
+
     /**
      * Initializes the scene
      */
@@ -55,8 +49,6 @@ public class MainWindow extends AnchorPane {
         setupBackground();
         setupAnimation();
     }
-
-    private Runnable onExit;
 
     public void setOnExit(Runnable onExit) {
         this.onExit = onExit;
@@ -71,9 +63,9 @@ public class MainWindow extends AnchorPane {
         backgroundImage.fitHeightProperty().bind(root.heightProperty());
 
         ImageView[] clones = {
-                new ImageView(backgroundImage.getImage()),
-                new ImageView(backgroundImage.getImage()),
-                new ImageView(backgroundImage.getImage())
+            new ImageView(backgroundImage.getImage()),
+            new ImageView(backgroundImage.getImage()),
+            new ImageView(backgroundImage.getImage())
         };
 
         for (ImageView bg : clones) {
@@ -111,10 +103,10 @@ public class MainWindow extends AnchorPane {
 
     private void setupAnimation() {
         ImageView[] allBackgrounds = {
-                backgroundImage,
-                (ImageView) root.getChildren().get(root.getChildren().size() - 3),
-                (ImageView) root.getChildren().get(root.getChildren().size() - 2),
-                (ImageView) root.getChildren().get(root.getChildren().size() - 1)
+            backgroundImage,
+            (ImageView) root.getChildren().get(root.getChildren().size() - 3),
+            (ImageView) root.getChildren().get(root.getChildren().size() - 2),
+            (ImageView) root.getChildren().get(root.getChildren().size() - 1)
         };
 
         Timeline timeline = new Timeline();
@@ -159,7 +151,7 @@ public class MainWindow extends AnchorPane {
         nuke = n;
         nuke.start(Bootstrap.getConfigPath().toString());
         VoiceEngine.init();
-        AIEngine.init(Bootstrap.getConfigPath().getParent().resolve("api.txt"));
+        AiEngine.init(Bootstrap.getConfigPath().getParent().resolve("api.txt"));
         MusicEngine.start(Bootstrap.getConfigPath().getParent().getParent().resolve("audio"));
 
         // kill TTS and music when window is closed with the X button
@@ -213,7 +205,9 @@ public class MainWindow extends AnchorPane {
                 userInput.requestFocus();
                 VoiceEngine.speak(finalResponse);
                 if (!stillRunning) {
-                    if (onExit != null) onExit.run();
+                    if (onExit != null) {
+                        onExit.run();
+                    }
                 }
             });
         }).start();

@@ -1,11 +1,11 @@
 package ui;
 
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 /**
  * Handles background music with shuffle playback.
@@ -27,12 +27,19 @@ public class MusicEngine {
         }
     }
 
+
+    /**
+     * Lowers music volume
+     */
     public static void duck() {
         if (currentPlayer != null) {
             currentPlayer.setVolume(normalVolume * 0.2);
         }
     }
 
+    /**
+     * Returns music volume to default
+     */
     public static void unduck() {
         if (currentPlayer != null) {
             currentPlayer.setVolume(normalVolume);

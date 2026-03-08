@@ -108,7 +108,7 @@ public class Process {
 
             if (m == null) {
                 // unrecognised command — try fuzzy match then AI fallback
-                System.out.println(AIEngine.handle(input, commandsToMethods.keySet()));
+                System.out.println(AiEngine.handle(input, commandsToMethods.keySet()));
                 return true;
             }
 

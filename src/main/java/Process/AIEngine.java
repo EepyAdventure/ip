@@ -15,7 +15,7 @@ import java.util.Collection;
  * The proxy URL and token are baked in — no API key needed on the user's machine.
  * In test mode, the AI fallback is always skipped to prevent API calls.
  */
-public class AIEngine {
+public class AiEngine {
 
     private static final int FUZZY_THRESHOLD = 1;
 
@@ -27,11 +27,13 @@ public class AIEngine {
 
     private static final String MODEL = "claude-haiku-4-5-20251001";
     private static final String SYSTEM_PROMPT =
-            "You are NUKE, a chaotic task manager chatbot who is pissed because you and the user are the last two sapient being left." +
-                    "You know these commands: add, delete, list, mark, unmark, find, save, echo, bye. " +
-                    "The user has typed something not in the command which you would rather they do instead of talking to you" +
-                    "Respond to the prompt, in character — threatening, unhinged. Keep it under 3 sentences." +
-                    "Do not break character. Do not explain what you are.";
+            "You are NUKE, a chaotic task manager chatbot who is pissed because"
+                    + "you and the user are the last two sapient being left."
+                    + "You know these commands: add, delete, list, mark, unmark, find, save, echo, bye. "
+                    + "The user has typed something not in the command"
+                    + "which you would rather they do instead of talking to you"
+                    + "Respond to the prompt, in character — threatening, unhinged. Keep it under 3 sentences."
+                    + "Do not break character. Do not explain what you are.";
 
     private static boolean testMode = false;
 
@@ -77,8 +79,8 @@ public class AIEngine {
         }
 
         if (closestDistance <= FUZZY_THRESHOLD) {
-            return "Did you mean `" + closest + "`? " +
-                    "Because what you typed was NOT that. Try again.";
+            return "Did you mean `" + closest + "`? "
+                    + "Because what you typed was NOT that. Try again.";
         }
 
         // no close match — fall back to Claude via proxy unless in test mode
@@ -122,7 +124,9 @@ public class AIEngine {
             if (response.statusCode() == 200) {
                 String responseBody = response.body();
                 int start = responseBody.indexOf("\"text\":\"") + 8;
-                if (start < 8) return null;
+                if (start < 8) {
+                    return null;
+                }
 
                 // walk character by character to find the real end quote
                 // accounting for escaped characters
@@ -132,12 +136,28 @@ public class AIEngine {
                     char c = responseBody.charAt(i);
                     if (c == '\\' && i + 1 < responseBody.length()) {
                         char next = responseBody.charAt(i + 1);
+                        //The checkstyle wanted this, not me
                         switch (next) {
-                            case 'n' -> { result.append('\n'); i += 2; }
-                            case 't' -> { result.append('\t'); i += 2; }
-                            case '"' -> { result.append('"'); i += 2; }
-                            case '\\' -> { result.append('\\'); i += 2; }
-                            default -> { result.append(next); i += 2; }
+                        case 'n' -> {
+                            result.append('\n');
+                            i += 2;
+                        }
+                        case 't' -> {
+                            result.append('\t');
+                            i += 2;
+                        }
+                        case '"' -> {
+                            result.append('"');
+                            i += 2;
+                        }
+                        case '\\' -> {
+                            result.append('\\');
+                            i += 2;
+                        }
+                        default -> {
+                            result.append(next);
+                            i += 2;
+                        }
                         }
                     } else if (c == '"') {
                         break; // real end quote found

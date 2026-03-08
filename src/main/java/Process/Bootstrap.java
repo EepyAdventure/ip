@@ -54,30 +54,30 @@ public class Bootstrap {
             "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe";
 
     private static final String CONFIG =
-            ".\\data\\commands.txt\n" +
-                    ".\\data\\User Data\\defaultPerm.txt\n";
+            ".\\data\\commands.txt\n"
+                    + ".\\data\\User Data\\defaultPerm.txt\n";
 
     private static final String COMMANDS =
-            "process.Action exit .\\data\\commands\\bye.txt\n" +
-                    "process.Action echo [Ljava.lang.String; .\\data\\commands\\echo.txt\n" +
-                    "process.Action add java.lang.String [Ljava.lang.String; .\\data\\commands\\add.txt\n" +
-                    "process.Action delete java.lang.String .\\data\\commands\\delete.txt\n" +
-                    "process.Action list .\\data\\commands\\list.txt\n" +
-                    "process.Action mark java.lang.String .\\data\\commands\\mark.txt\n" +
-                    "process.Action unmark java.lang.String .\\data\\commands\\unmark.txt\n" +
-                    "process.Action save .\\data\\commands\\save.txt\n" +
-                    "process.Action find java.lang.String .\\data\\commands\\find.txt\n";
+            "process.Action exit .\\data\\commands\\bye.txt\n"
+                    + "process.Action echo [Ljava.lang.String; .\\data\\commands\\echo.txt\n"
+                    + "process.Action add java.lang.String [Ljava.lang.String; .\\data\\commands\\add.txt\n"
+                    + "process.Action delete java.lang.String .\\data\\commands\\delete.txt\n"
+                    + "process.Action list .\\data\\commands\\list.txt\n"
+                    + "process.Action mark java.lang.String .\\data\\commands\\mark.txt\n"
+                    + "process.Action unmark java.lang.String .\\data\\commands\\unmark.txt\n"
+                    + "process.Action save .\\data\\commands\\save.txt\n"
+                    + "process.Action find java.lang.String .\\data\\commands\\find.txt\n";
 
     private static final Map<String, String> COMMAND_FILES = Map.of(
-            "bye.txt",    "bye\nfarewell\nsee you later\n",
-            "echo.txt",   "echo\nrepeat\n",
-            "add.txt",    "add\n",
+            "bye.txt", "bye\nfarewell\nsee you later\n",
+            "echo.txt", "echo\nrepeat\n",
+            "add.txt", "add\n",
             "delete.txt", "delete\n",
-            "list.txt",   "list\n",
-            "mark.txt",   "mark\ncomplete\n",
+            "list.txt", "list\n",
+            "mark.txt", "mark\ncomplete\n",
             "unmark.txt", "unmark\nuncomplete\n",
-            "save.txt",   "save\n",
-            "find.txt",   "find\n"
+            "save.txt", "save\n",
+            "find.txt", "find\n"
     );
 
     /**
@@ -125,7 +125,9 @@ public class Bootstrap {
                 Files.deleteIfExists(base.resolve("_nuke_relaunch.sh"));
                 new File(base.getParent().resolve("_nuke_relocate.bat").toString()).delete();
                 new File(base.getParent().resolve("_nuke_relocate.sh").toString()).delete();
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+                //ignored
+            }
 
             writeIfMissing(base.resolve(Paths.get("config", "config.txt")), CONFIG);
             writeIfMissing(base.resolve(Paths.get("config", "api.txt")), "");
@@ -239,21 +241,22 @@ public class Bootstrap {
             Path script = parentDir.resolve("_nuke_relocate.bat");
             String relaunchScript = nukeDir.resolve("_nuke_relaunch.bat").toString();
             String batch =
-                    "@echo off\n" +
-                            "echo Setting up NUKE for the first time...\n" +
-                            "echo This may take a moment. Please wait.\n" +
-                            ":waitloop\n" +
-                            "move /Y \"" + jar + "\" \"" + targetJar + "\" >nul 2>&1\n" +
-                            "if exist \"" + targetJar + "\" goto success\n" +
-                            "\"" + POWERSHELL + "\" -Command \"Start-Sleep -Seconds 1\"\n" +
-                            "goto waitloop\n" +
-                            ":success\n" +
-                            "echo Done! Launching NUKE...\n" +
-                            "echo @echo off > \"" + relaunchScript + "\"\n" +
-                            "echo start \"NUKE\" /D \"" + nukeDir + "\" \"javaw\" -jar \"" + targetJar + "\" >> \"" + relaunchScript + "\"\n" +
-                            "echo exit >> \"" + relaunchScript + "\"\n" +
-                            "start \"\" \"" + relaunchScript + "\"\n" +
-                            "exit\n";
+                    "@echo off\n"
+                            + "echo Setting up NUKE for the first time...\n"
+                            + "echo This may take a moment. Please wait.\n"
+                            + ":waitloop\n"
+                            + "move /Y \"" + jar + "\" \"" + targetJar + "\" >nul 2>&1\n"
+                            + "if exist \"" + targetJar + "\" goto success\n"
+                            + "\"" + POWERSHELL + "\" -Command \"Start-Sleep -Seconds 1\"\n"
+                            + "goto waitloop\n"
+                            + ":success\n"
+                            + "echo Done! Launching NUKE...\n"
+                            + "echo @echo off > \"" + relaunchScript + "\"\n"
+                            + "echo start \"NUKE\" /D \"" + nukeDir
+                            + "\" \"javaw\" -jar \"" + targetJar + "\" >> \"" + relaunchScript + "\"\n"
+                            + "echo exit >> \"" + relaunchScript + "\"\n"
+                            + "start \"\" \"" + relaunchScript + "\"\n"
+                            + "exit\n";
             Files.writeString(script, batch);
             new ProcessBuilder("cmd", "/c", "start", "\"Relocating NUKE...\"", script.toString())
                     .start();
@@ -263,27 +266,27 @@ public class Bootstrap {
             Path script = parentDir.resolve("_nuke_relocate.sh");
             String relaunchScript = nukeDir.resolve("_nuke_relaunch.sh").toString();
             String shell =
-                    "#!/bin/bash\n" +
-                            "echo 'Setting up NUKE for the first time...'\n" +
-                            "echo 'This may take a moment. Please wait.'\n" +
-                            "while lsof \"" + jar + "\" > /dev/null 2>&1; do\n" +
-                            "    sleep 1\n" +
-                            "done\n" +
-                            "mkdir -p \"" + nukeDir + "\"\n" +
-                            "mv \"" + jar + "\" \"" + targetJar + "\"\n" +
-                            "if [ -f \"" + targetJar + "\" ]; then\n" +
-                            "    echo 'Done! Launching NUKE...'\n" +
-                            "    echo '#!/bin/bash' > \"" + relaunchScript + "\"\n" +
-                            "    echo 'cd \"" + nukeDir + "\"' >> \"" + relaunchScript + "\"\n" +
-                            "    echo 'java -jar \"" + targetJar + "\" &' >> \"" + relaunchScript + "\"\n" +
-                            "    echo 'rm -- \"$0\"' >> \"" + relaunchScript + "\"\n" +
-                            "    chmod +x \"" + relaunchScript + "\"\n" +
-                            "    bash \"" + relaunchScript + "\"\n" +
-                            "    rm -- \"$0\"\n" +
-                            "else\n" +
-                            "    echo 'Failed to move jar, is it still open?'\n" +
-                            "    read -p 'Press any key to continue...'\n" +
-                            "fi\n";
+                    "#!/bin/bash\n"
+                            + "echo 'Setting up NUKE for the first time...'\n"
+                            + "echo 'This may take a moment. Please wait.'\n"
+                            + "while lsof \"" + jar + "\" > /dev/null 2>&1; do\n"
+                            + "    sleep 1\n"
+                            + "done\n"
+                            + "mkdir -p \"" + nukeDir + "\"\n"
+                            + "mv \"" + jar + "\" \"" + targetJar + "\"\n"
+                            + "if [ -f \"" + targetJar + "\" ]; then\n"
+                            + "    echo 'Done! Launching NUKE...'\n"
+                            + "    echo '#!/bin/bash' > \"" + relaunchScript + "\"\n"
+                            + "    echo 'cd \"" + nukeDir + "\"' >> \"" + relaunchScript + "\"\n"
+                            + "    echo 'java -jar \"" + targetJar + "\" &' >> \"" + relaunchScript + "\"\n"
+                            + "    echo 'rm -- \"$0\"' >> \"" + relaunchScript + "\"\n"
+                            + "    chmod +x \"" + relaunchScript + "\"\n"
+                            + "    bash \"" + relaunchScript + "\"\n"
+                            + "    rm -- \"$0\"\n"
+                            + "else\n"
+                            + "    echo 'Failed to move jar, is it still open?'\n"
+                            + "    read -p 'Press any key to continue...'\n"
+                            + "fi\n";
             Files.writeString(script, shell);
             script.toFile().setExecutable(true);
             new ProcessBuilder("/bin/bash", script.toString()).start();
